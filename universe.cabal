@@ -10,6 +10,13 @@ copyright:           2013 Daniel Wagner
 category:            Data
 build-type:          Simple
 cabal-version:       >=1.8
+source-repository head
+    type:            git
+    location:        https://github.com/dmwit/universe
+source-repository this
+    type:            git
+    location:        https://github.com/dmwit/universe
+    tag:             0.0
 
 library
   exposed-modules:     Data.Universe, Data.Universe.Helpers

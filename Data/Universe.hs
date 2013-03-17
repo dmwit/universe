@@ -12,8 +12,6 @@ import Data.Ratio
 import Data.Void
 import Data.Word
 
--- TODO: add that we ignore bottoms everywhere in this module
-
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
 -- particular, you promise that any finite inhabitant has a finite index in
