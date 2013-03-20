@@ -27,7 +27,14 @@ xs +++ ys = interleave [xs,ys]
 
 -- | Fair 2-way Cartesian product: given two (possibly infinite) lists, produce
 -- a single list such that whenever @v@ and @w@ have finite indices in the
--- input list, @(v,w)@ has finite index in the output list.
+-- input lists, @(v,w)@ has finite index in the output list.
 (+*+) :: [a] -> [b] -> [(a,b)]
 (x:xs) +*+ ys = map ((,) x) ys +++ (xs +*+ ys)
 [] +*+ ys = []
+
+-- | Fair n-way Cartesian product: given a finite number of (possibly
+-- infinite) lists, produce a single list such that whenever @vi@ has finite
+-- index in list i for each i, @[v1, ..., vn]@ has finite index in the output
+-- list.
+choices :: [[a]] -> [[a]]
+choices = foldr ((map (uncurry (:)) .) . (+*+)) [[]]

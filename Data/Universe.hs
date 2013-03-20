@@ -7,6 +7,7 @@ module Data.Universe
 import Control.Monad
 import Data.Universe.Helpers
 import Data.Int
+import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Ratio
 import Data.Void
@@ -50,6 +51,14 @@ instance (Universe a, Universe b) => Universe (a, b) where universe = universe +
 instance (Universe a, Universe b, Universe c) => Universe (a, b, c) where universe = [(a,b,c) | ((a,b),c) <- universe +*+ universe +*+ universe]
 instance (Universe a, Universe b, Universe c, Universe d) => Universe (a, b, c, d) where universe = [(a,b,c,d) | (((a,b),c),d) <- universe +*+ universe +*+ universe +*+ universe]
 instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Universe (a, b, c, d, e) where universe = [(a,b,c,d,e) | ((((a,b),c),d),e) <- universe +*+ universe +*+ universe +*+ universe +*+ universe]
+
+-- could change the Ord constraint to an Eq one, but come on, how many finite
+-- types can't be ordered?
+instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
+	universe = map tableToFunction tables where
+		tables          = choices [universe | _ <- monoUniverse]
+		tableToFunction = (!) . fromList . zip monoUniverse
+		monoUniverse    = universeF
 
 instance Universe All where universe = map All universe
 instance Universe Any where universe = map Any universe
@@ -104,6 +113,8 @@ instance Finite a => Finite (Product a) where universeF = map Product universeF
 instance Finite a => Finite (Dual    a) where universeF = map Dual    universeF
 instance Finite a => Finite (First   a) where universeF = map First   universeF
 instance Finite a => Finite (Last    a) where universeF = map Last    universeF
+
+instance (Ord a, Finite a, Finite b) => Finite (a -> b)
 
 -- to add as people ask for them:
 -- instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
