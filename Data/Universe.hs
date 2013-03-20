@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies #-}
 module Data.Universe
 	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
 	  Universe(..)
@@ -68,20 +69,16 @@ instance Universe a => Universe (Dual    a) where universe = map Dual    univers
 instance Universe a => Universe (First   a) where universe = map First   universe
 instance Universe a => Universe (Last    a) where universe = map Last    universe
 
--- | Some contortions to avoid extensions. The only instance of this class is 'Integer'.
-class Integral a => IsInteger a
-instance IsInteger Integer
-
 -- see http://mathlesstraveled.com/2008/01/07/recounting-the-rationals-part-ii-fractions-grow-on-trees/
 -- TODO: since we know these numerators and denominators are always going to be
 -- in reduced terms, we could use (:%) when we know we're compiling with GHC to
 -- get a small speed boost
-positiveRationals :: IsInteger a => [Ratio a]
+positiveRationals :: [Ratio Integer]
 positiveRationals = 1 : map lChild positiveRationals +++ map rChild positiveRationals where
 	lChild frac = numerator frac % (numerator frac + denominator frac)
 	rChild frac = (numerator frac + denominator frac) % denominator frac
 
-instance IsInteger a => Universe (Ratio a) where universe = 0 : map negate positiveRationals +++ positiveRationals
+instance a ~ Integer => Universe (Ratio a) where universe = 0 : map negate positiveRationals +++ positiveRationals
 
 instance Finite ()
 instance Finite Bool
