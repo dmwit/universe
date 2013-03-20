@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts, TypeFamilies #-}
 module Data.Universe
 	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
 	  Universe(..)
@@ -13,6 +13,16 @@ import Data.Ratio
 import Data.Universe.Helpers
 import Data.Void
 import Data.Word
+
+-- for representable stuff!
+import Control.Comonad.Trans.Traced
+import Control.Monad.Identity
+import Control.Monad.Reader
+import Control.Monad.Trans.Identity
+import Data.Functor.Compose
+import Data.Functor.Representable
+import Data.Key (Key)
+import qualified Data.Functor.Product as Functor
 
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
@@ -79,6 +89,33 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
 		tables          = choices [universe | _ <- monoUniverse]
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
+
+-- instances for Representable functors; in general we want
+--   instance (Finite (Key f), Ord (Key f), Universe a, Representable f)
+--   	=> Universe (f a)
+--   	where universe = map tabulate universe
+-- but this has ridiculous overlap, so we expand this for each of the
+-- instantiations of f that are Representable instead
+
+instance Universe a => Universe (Identity a) where universe = map Identity universe
+instance (Representable f, Finite (Key f), Ord (Key f), Universe a)
+	=> Universe (IdentityT f a)
+	where universe = map tabulate universe
+instance (Representable f, Finite (Key f), Ord (Key f), Universe a)
+	=> Universe (Rep f a)
+	where universe = map tabulate universe
+instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Universe a)
+	=> Universe (TracedT s f a)
+	where universe = map tabulate universe
+instance (Representable f, Finite e, Ord e, Finite (Key f), Ord (Key f), Universe a)
+	=> Universe (ReaderT e f a)
+	where universe = map tabulate universe
+instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Universe a)
+	=> Universe (Compose f g a)
+	where universe = map tabulate universe
+instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Universe a)
+	=> Universe (Functor.Product f g a)
+	where universe = map tabulate universe
 
 instance Finite ()
 instance Finite Bool
