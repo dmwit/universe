@@ -6,11 +6,11 @@ module Data.Universe
 	) where
 
 import Control.Monad
-import Data.Universe.Helpers
 import Data.Int
 import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Ratio
+import Data.Universe.Helpers
 import Data.Void
 import Data.Word
 
@@ -53,14 +53,6 @@ instance (Universe a, Universe b, Universe c) => Universe (a, b, c) where univer
 instance (Universe a, Universe b, Universe c, Universe d) => Universe (a, b, c, d) where universe = [(a,b,c,d) | (((a,b),c),d) <- universe +*+ universe +*+ universe +*+ universe]
 instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Universe (a, b, c, d, e) where universe = [(a,b,c,d,e) | ((((a,b),c),d),e) <- universe +*+ universe +*+ universe +*+ universe +*+ universe]
 
--- could change the Ord constraint to an Eq one, but come on, how many finite
--- types can't be ordered?
-instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
-	universe = map tableToFunction tables where
-		tables          = choices [universe | _ <- monoUniverse]
-		tableToFunction = (!) . fromList . zip monoUniverse
-		monoUniverse    = universeF
-
 instance Universe All where universe = map All universe
 instance Universe Any where universe = map Any universe
 instance Universe a => Universe (Sum     a) where universe = map Sum     universe
@@ -79,6 +71,14 @@ positiveRationals = 1 : map lChild positiveRationals +++ map rChild positiveRati
 	rChild frac = (numerator frac + denominator frac) % denominator frac
 
 instance a ~ Integer => Universe (Ratio a) where universe = 0 : map negate positiveRationals +++ positiveRationals
+
+-- could change the Ord constraint to an Eq one, but come on, how many finite
+-- types can't be ordered?
+instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
+	universe = map tableToFunction tables where
+		tables          = choices [universe | _ <- monoUniverse]
+		tableToFunction = (!) . fromList . zip monoUniverse
+		monoUniverse    = universeF
 
 instance Finite ()
 instance Finite Bool
