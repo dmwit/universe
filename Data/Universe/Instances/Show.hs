@@ -1,7 +1,7 @@
-module Data.Universe.Instances.Show
+module Data.Universe.Instances.Show (
 	-- | A 'Show' instance for functions, given the input is 'Finite' and both
 	-- the input and output are 'Show'.
-where
+	) where
 
 import Data.Universe
 

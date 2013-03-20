@@ -1,8 +1,8 @@
-module Data.Universe.Instances
+module Data.Universe.Instances (
 	-- | A convenience module that imports the submodules @Eq@, @Ord@, @Show@,
 	-- and @Read@ to provide instances of these classes for functions over
 	-- finite inputs.
-where
+	) where
 
 import Data.Universe.Instances.Eq
 import Data.Universe.Instances.Ord
