@@ -72,9 +72,27 @@ instance Universe a => Universe (First   a) where universe = map First   univers
 instance Universe a => Universe (Last    a) where universe = map Last    universe
 
 -- see http://mathlesstraveled.com/2008/01/07/recounting-the-rationals-part-ii-fractions-grow-on-trees/
--- TODO: since we know these numerators and denominators are always going to be
--- in reduced terms, we could use (:%) when we know we're compiling with GHC to
--- get a small speed boost
+--
+-- also, Brent Yorgey writes:
+--
+-- positiveRationals2 :: [Ratio Integer]
+-- positiveRationals2 = iterate' next 1
+--   where
+--     next x = let (n,y) = properFraction x in recip (fromInteger n + 1 - y)
+--     iterate' f x = let x' = f x in x' `seq` (x : iterate' f x')
+--
+-- Compiling this code with -O2 and doing some informal tests seems to
+-- show that positiveRationals and positiveRationals2 have almost exactly
+-- the same efficiency for generating the entire list (e.g. the times for
+-- finding the sum of the first 100000 rationals are pretty much
+-- indistinguishable).  positiveRationals is still the clear winner for
+-- generating just the nth rational for some particular n -- some simple
+-- experiments seem to indicate that doing this with positiveRationals2
+-- scales linearly while with positiveRationals it scales sub-linearly,
+-- as expected.
+--
+-- Surprisingly, replacing % with :% in positiveRationals seems to make
+-- no appreciable difference.
 positiveRationals :: [Ratio Integer]
 positiveRationals = 1 : map lChild positiveRationals +++ map rChild positiveRationals where
 	lChild frac = numerator frac % (numerator frac + denominator frac)
