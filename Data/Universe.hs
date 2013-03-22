@@ -166,7 +166,31 @@ instance Finite a => Finite (Dual    a) where universeF = map Dual    universeF
 instance Finite a => Finite (First   a) where universeF = map First   universeF
 instance Finite a => Finite (Last    a) where universeF = map Last    universeF
 
-instance (Ord a, Finite a, Finite b) => Finite (a -> b)
+instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
+	universeF = map tableToFunction tables where
+		tables          = sequence [universeF | _ <- monoUniverse]
+		tableToFunction = (!) . fromList . zip monoUniverse
+		monoUniverse    = universeF
+
+instance Finite a => Finite (Identity a) where universeF = map Identity universeF
+instance (Representable f, Finite (Key f), Ord (Key f), Finite a)
+	=> Finite (IdentityT f a)
+	where universeF = map tabulate universeF
+instance (Representable f, Finite (Key f), Ord (Key f), Finite a)
+	=> Finite (Rep f a)
+	where universeF = map tabulate universeF
+instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Finite a)
+	=> Finite (TracedT s f a)
+	where universeF = map tabulate universeF
+instance (Representable f, Finite e, Ord e, Finite (Key f), Ord (Key f), Finite a)
+	=> Finite (ReaderT e f a)
+	where universeF = map tabulate universeF
+instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Finite a)
+	=> Finite (Compose f g a)
+	where universeF = map tabulate universeF
+instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Finite a)
+	=> Finite (Functor.Product f g a)
+	where universeF = map tabulate universeF
 
 -- to add as people ask for them:
 -- instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
