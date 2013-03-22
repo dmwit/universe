@@ -108,31 +108,27 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 
--- instances for Representable functors; in general we want
---   instance (Finite (Key f), Ord (Key f), Universe a, Representable f)
---   	=> Universe (f a)
---   	where universe = map tabulate universe
--- but this has ridiculous overlap, so we expand this for each of the
--- instantiations of f that are Representable instead
+instance  Universe    a                    => Universe (Identity    a) where universe = map Identity  universe
+instance  Universe (f a)                   => Universe (IdentityT f a) where universe = map IdentityT universe
+instance (Finite e, Ord e, Universe (m a)) => Universe (ReaderT e m a) where universe = map ReaderT universe
+instance  Universe (f (g a))               => Universe (Compose f g a) where universe = map Compose universe
+instance (Universe (f a), Universe (g a))  => Universe (Functor.Product f g a) where universe = [Functor.Pair f g | (f, g) <- universe +*+ universe]
 
-instance Universe a => Universe (Identity a) where universe = map Identity universe
-instance (Representable f, Finite (Key f), Ord (Key f), Universe a)
-	=> Universe (IdentityT f a)
-	where universe = map tabulate universe
+-- We could do this:
+--
+-- instance Universe (f a) => Universe (Rep f a) where universe = map Rep universe
+--
+-- However, since you probably only apply Rep to functors when you want to
+-- think of them as being representable, I think it makes sense to use an
+-- instance based on the representable-ness rather than the inherent
+-- universe-ness.
+--
+-- Please complain if you disagree!
 instance (Representable f, Finite (Key f), Ord (Key f), Universe a)
 	=> Universe (Rep f a)
 	where universe = map tabulate universe
 instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Universe a)
 	=> Universe (TracedT s f a)
-	where universe = map tabulate universe
-instance (Representable f, Finite e, Ord e, Finite (Key f), Ord (Key f), Universe a)
-	=> Universe (ReaderT e f a)
-	where universe = map tabulate universe
-instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Universe a)
-	=> Universe (Compose f g a)
-	where universe = map tabulate universe
-instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Universe a)
-	=> Universe (Functor.Product f g a)
 	where universe = map tabulate universe
 
 instance Finite ()
@@ -172,24 +168,17 @@ instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 
-instance Finite a => Finite (Identity a) where universeF = map Identity universeF
-instance (Representable f, Finite (Key f), Ord (Key f), Finite a)
-	=> Finite (IdentityT f a)
-	where universeF = map tabulate universeF
+instance  Finite    a                    => Finite (Identity    a) where universeF = map Identity  universeF
+instance  Finite (f a)                   => Finite (IdentityT f a) where universeF = map IdentityT universeF
+instance (Finite e, Ord e, Finite (m a)) => Finite (ReaderT e m a) where universeF = map ReaderT   universeF
+instance  Finite (f (g a))               => Finite (Compose f g a) where universeF = map Compose   universeF
+instance (Finite (f a), Finite (g a))    => Finite (Functor.Product f g a) where universeF = liftM2 Functor.Pair universeF universeF
+
 instance (Representable f, Finite (Key f), Ord (Key f), Finite a)
 	=> Finite (Rep f a)
 	where universeF = map tabulate universeF
 instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Finite a)
 	=> Finite (TracedT s f a)
-	where universeF = map tabulate universeF
-instance (Representable f, Finite e, Ord e, Finite (Key f), Ord (Key f), Finite a)
-	=> Finite (ReaderT e f a)
-	where universeF = map tabulate universeF
-instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Finite a)
-	=> Finite (Compose f g a)
-	where universeF = map tabulate universeF
-instance (Representable f, Representable g, Finite (Key f), Ord (Key f), Finite (Key g), Ord (Key g), Finite a)
-	=> Finite (Functor.Product f g a)
 	where universeF = map tabulate universeF
 
 -- to add as people ask for them:
