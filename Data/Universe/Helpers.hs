@@ -7,6 +7,9 @@ module Data.Universe.Helpers (
 
 import Data.List
 
+-- WHEN EDITING THIS DEFINITION:
+-- edit ../../defsigs/Data/Universe/Class.hs:universe in tandem!
+
 -- | For many types, the 'universe' should be @[minBound .. maxBound]@;
 -- 'universeDef' makes it easy to make such types an instance of 'Universe' via
 -- the snippet
