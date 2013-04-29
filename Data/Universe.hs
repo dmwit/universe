@@ -50,7 +50,7 @@ instance (Universe a, Universe b, Universe c) => Universe (a, b, c) where univer
 instance (Universe a, Universe b, Universe c, Universe d) => Universe (a, b, c, d) where universe = [(a,b,c,d) | (((a,b),c),d) <- universe +*+ universe +*+ universe +*+ universe]
 instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Universe (a, b, c, d, e) where universe = [(a,b,c,d,e) | ((((a,b),c),d),e) <- universe +*+ universe +*+ universe +*+ universe +*+ universe]
 
-instance Finite a => Universe [a] where universe = [0..] >>= flip replicateM universeF
+instance Finite a => Universe [a] where universe = [] : interleave [[h:t | t <- universe] | h <- universe]
 -- probably also possible, but wait until somebody demands it:
 -- instance Universe a => Universe [a] where universe = {- something using choices and diagonal and replicate n universe -}
 
