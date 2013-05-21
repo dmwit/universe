@@ -1,5 +1,5 @@
 name:                universe
-version:             0.4
+version:             0.4.0.1
 synopsis:            Classes for types where we know all the values
 description:         A small package, in the spirit of data-default, which allows the munging of finite and recursively enumerable types
 license:             BSD3
@@ -16,7 +16,7 @@ source-repository head
 source-repository this
     type:            git
     location:        https://github.com/dmwit/universe
-    tag:             0.3
+    tag:             0.4.0.1
 
 library
   exposed-modules:     Data.Universe,
