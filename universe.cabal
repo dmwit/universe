@@ -27,7 +27,6 @@ library
                        Data.Universe.Instances.Read,
                        Data.Universe.Instances.Show,
                        Data.Universe.Instances.Traversable
-  other-modules:       Data.Universe.Class
   hs-source-dirs:      .
   if impl(ghc >= 7.4)
     cpp-options:       -DDEFAULT_SIGNATURES=1

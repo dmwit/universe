@@ -1,4 +1,7 @@
-{-# LANGUAGE FlexibleContexts, TypeFamilies #-}
+{-# LANGUAGE CPP, FlexibleContexts, TypeFamilies #-}
+#ifdef DEFAULT_SIGNATURES
+{-# LANGUAGE DefaultSignatures #-}
+#endif
 module Data.Universe
 	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
 	  Universe(..)
@@ -11,7 +14,6 @@ import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Ratio
 import Data.Universe.Helpers
-import Data.Universe.Class
 import Data.Void
 import Data.Word
 
@@ -24,6 +26,25 @@ import Data.Functor.Compose
 import Data.Functor.Representable
 import Data.Key (Key)
 import qualified Data.Functor.Product as Functor
+
+-- | Creating an instance of this class is a declaration that your type is
+-- recursively enumerable (and that 'universe' is that enumeration). In
+-- particular, you promise that any finite inhabitant has a finite index in
+-- 'universe', and that no inhabitant appears at two different finite indices.
+class Universe a where
+	universe :: [a]
+#ifdef DEFAULT_SIGNATURES
+	default universe :: (Enum a, Bounded a) => [a]
+	universe = universeDef
+#endif
+
+-- | Creating an instance of this class is a declaration that your 'universe'
+-- eventually ends. Minimal definition: no methods defined. By default,
+-- @universeF = universe@, but for some types (like 'Either') the 'universeF'
+-- method may have a more intuitive ordering.
+class Universe a => Finite a where
+	universeF :: [a]
+	universeF = universe
 
 instance Universe ()       where universe = universeDef
 instance Universe Bool     where universe = universeDef
