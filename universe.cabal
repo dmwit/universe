@@ -1,7 +1,7 @@
 name:                universe
 version:             0.4.0.1
 synopsis:            Classes for types where we know all the values
-description:         A small package, in the spirit of data-default, which allows the munging of finite and recursively enumerable types
+description:         Munge finite and recursively enumerable types
 license:             BSD3
 license-file:        LICENSE
 author:              Daniel Wagner
