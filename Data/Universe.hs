@@ -6,6 +6,7 @@ module Data.Universe
 	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
 	  Universe(..)
 	, Finite(..)
+	, InfiniteList (..)
 	) where
 
 import Control.Monad
@@ -74,6 +75,15 @@ instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Univers
 instance Finite a => Universe [a] where universe = [] : interleave [[h:t | t <- universe] | h <- universe]
 -- probably also possible, but wait until somebody demands it:
 -- instance Universe a => Universe [a] where universe = {- something using choices and diagonal and replicate n universe -}
+
+-- | A newtype for making a universe of potentially infinite lists
+newtype InfiniteList a = InfiniteList { unInfiniteList :: [a] }
+   deriving (Show, Eq, Ord, Read)
+
+instance Universe a => Universe (InfiniteList a) where
+   universe = map InfiniteList . diagonal $ 
+      [[]] : [[h:t | InfiniteList t <- universe] | h <- universe]
+
 
 instance Universe All where universe = map All universe
 instance Universe Any where universe = map Any universe
