@@ -23,8 +23,7 @@ import Control.Monad.Identity
 import Control.Monad.Reader
 import Control.Monad.Trans.Identity
 import Data.Functor.Compose
-import Data.Functor.Representable
-import Data.Key (Key)
+import Data.Functor.Rep
 import qualified Data.Functor.Product as Functor
 
 -- | Creating an instance of this class is a declaration that your type is
@@ -127,7 +126,7 @@ instance (Universe (f a), Universe (g a))  => Universe (Functor.Product f g a) w
 
 -- We could do this:
 --
--- instance Universe (f a) => Universe (Rep f a) where universe = map Rep universe
+-- instance Universe (f a) => Universe (Co f a) where universe = map Rep universe
 --
 -- However, since you probably only apply Rep to functors when you want to
 -- think of them as being representable, I think it makes sense to use an
@@ -135,10 +134,10 @@ instance (Universe (f a), Universe (g a))  => Universe (Functor.Product f g a) w
 -- universe-ness.
 --
 -- Please complain if you disagree!
-instance (Representable f, Finite (Key f), Ord (Key f), Universe a)
-	=> Universe (Rep f a)
+instance (Representable f, Finite (Rep f), Ord (Rep f), Universe a)
+	=> Universe (Co f a)
 	where universe = map tabulate universe
-instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Universe a)
+instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Universe a)
 	=> Universe (TracedT s f a)
 	where universe = map tabulate universe
 
@@ -185,10 +184,10 @@ instance (Finite e, Ord e, Finite (m a)) => Finite (ReaderT e m a) where univers
 instance  Finite (f (g a))               => Finite (Compose f g a) where universeF = map Compose   universeF
 instance (Finite (f a), Finite (g a))    => Finite (Functor.Product f g a) where universeF = liftM2 Functor.Pair universeF universeF
 
-instance (Representable f, Finite (Key f), Ord (Key f), Finite a)
-	=> Finite (Rep f a)
+instance (Representable f, Finite (Rep f), Ord (Rep f), Finite a)
+	=> Finite (Co f a)
 	where universeF = map tabulate universeF
-instance (Representable f, Finite s, Ord s, Finite (Key f), Ord (Key f), Finite a)
+instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Finite a)
 	=> Finite (TracedT s f a)
 	where universeF = map tabulate universeF
 
