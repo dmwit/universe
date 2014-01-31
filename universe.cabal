@@ -30,10 +30,10 @@ library
   if impl(ghc >= 7.4)
     cpp-options:       -DDEFAULT_SIGNATURES
   build-depends:       base                   >=4   && <5  ,
-                       comonad-transformers   >=0.1 && <4.0,
+                       comonad                >=4   && <4.1,
                        containers             >=0.1 && <1  ,
                        keys                   >=0.1 && <4  ,
                        mtl                    >=1.0 && <2.2,
-                       representable-functors >=2.4 && <3.3,
+                       adjunctions            >=4   && <4.1,
                        transformers           >=0.2 && <0.4,
                        void                   >=0.1 && <0.7
