@@ -9,7 +9,8 @@ import Data.Foldable
 import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Traversable
-import Data.Universe
+import Data.Universe.Class
+import Data.Universe.Instances.Base
 
 instance Finite e => Foldable ((->) e) where
 	foldMap f g = mconcat $ map (f . g) universeF

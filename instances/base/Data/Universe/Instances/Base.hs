@@ -1,49 +1,14 @@
-{-# LANGUAGE CPP, FlexibleContexts, TypeFamilies #-}
-#ifdef DEFAULT_SIGNATURES
-{-# LANGUAGE DefaultSignatures #-}
-#endif
-module Data.Universe
-	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
-	  Universe(..)
-	, Finite(..)
-	) where
+{-# LANGUAGE TypeFamilies #-}
+module Data.Universe.Instances.Base where
 
 import Control.Monad
 import Data.Int
 import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Ratio
+import Data.Universe.Class
 import Data.Universe.Helpers
-import Data.Void
 import Data.Word
-
--- for representable stuff!
-import Control.Comonad.Trans.Traced
-import Control.Monad.Identity
-import Control.Monad.Reader
-import Control.Monad.Trans.Identity
-import Data.Functor.Compose
-import Data.Functor.Rep
-import qualified Data.Functor.Product as Functor
-
--- | Creating an instance of this class is a declaration that your type is
--- recursively enumerable (and that 'universe' is that enumeration). In
--- particular, you promise that any finite inhabitant has a finite index in
--- 'universe', and that no inhabitant appears at two different finite indices.
-class Universe a where
-	universe :: [a]
-#ifdef DEFAULT_SIGNATURES
-	default universe :: (Enum a, Bounded a) => [a]
-	universe = universeDef
-#endif
-
--- | Creating an instance of this class is a declaration that your 'universe'
--- eventually ends. Minimal definition: no methods defined. By default,
--- @universeF = universe@, but for some types (like 'Either') the 'universeF'
--- method may have a more intuitive ordering.
-class Universe a => Finite a where
-	universeF :: [a]
-	universeF = universe
 
 instance Universe ()       where universe = universeDef
 instance Universe Bool     where universe = universeDef
@@ -60,7 +25,6 @@ instance Universe Word8    where universe = universeDef
 instance Universe Word16   where universe = universeDef
 instance Universe Word32   where universe = universeDef
 instance Universe Word64   where universe = universeDef
-instance Universe Void     where universe = []
 
 instance (Universe a, Universe b) => Universe (Either a b) where universe = map Left universe +++ map Right universe
 instance  Universe a              => Universe (Maybe  a  ) where universe = Nothing : map Just universe
@@ -118,29 +82,6 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 
-instance  Universe    a                    => Universe (Identity    a) where universe = map Identity  universe
-instance  Universe (f a)                   => Universe (IdentityT f a) where universe = map IdentityT universe
-instance (Finite e, Ord e, Universe (m a)) => Universe (ReaderT e m a) where universe = map ReaderT universe
-instance  Universe (f (g a))               => Universe (Compose f g a) where universe = map Compose universe
-instance (Universe (f a), Universe (g a))  => Universe (Functor.Product f g a) where universe = [Functor.Pair f g | (f, g) <- universe +*+ universe]
-
--- We could do this:
---
--- instance Universe (f a) => Universe (Co f a) where universe = map Rep universe
---
--- However, since you probably only apply Rep to functors when you want to
--- think of them as being representable, I think it makes sense to use an
--- instance based on the representable-ness rather than the inherent
--- universe-ness.
---
--- Please complain if you disagree!
-instance (Representable f, Finite (Rep f), Ord (Rep f), Universe a)
-	=> Universe (Co f a)
-	where universe = map tabulate universe
-instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Universe a)
-	=> Universe (TracedT s f a)
-	where universe = map tabulate universe
-
 instance Finite ()
 instance Finite Bool
 instance Finite Char
@@ -155,7 +96,7 @@ instance Finite Word8
 instance Finite Word16
 instance Finite Word32
 instance Finite Word64
-instance Finite Void
+
 instance  Finite a            => Finite (Maybe  a  )
 instance (Finite a, Finite b) => Finite (Either a b) where universeF = map Left universe ++ map Right universe
 
@@ -178,20 +119,4 @@ instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 
-instance  Finite    a                    => Finite (Identity    a) where universeF = map Identity  universeF
-instance  Finite (f a)                   => Finite (IdentityT f a) where universeF = map IdentityT universeF
-instance (Finite e, Ord e, Finite (m a)) => Finite (ReaderT e m a) where universeF = map ReaderT   universeF
-instance  Finite (f (g a))               => Finite (Compose f g a) where universeF = map Compose   universeF
-instance (Finite (f a), Finite (g a))    => Finite (Functor.Product f g a) where universeF = liftM2 Functor.Pair universeF universeF
-
-instance (Representable f, Finite (Rep f), Ord (Rep f), Finite a)
-	=> Finite (Co f a)
-	where universeF = map tabulate universeF
-instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Finite a)
-	=> Finite (TracedT s f a)
-	where universeF = map tabulate universeF
-
--- to add as people ask for them:
--- instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
--- instance (Ord a, Universe a) => Universe (Set a) (+Finite)
--- instance (Ord k, Universe k, Universe v) => Universe (Map k v) (+Finite)
+-- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)

@@ -1,0 +1,27 @@
+name:                universe-instances-base
+version:             1.0
+synopsis:            Universe instances for types from the base package
+homepage:            https://github.com/dmwit/universe
+license:             BSD3
+license-file:        LICENSE
+author:              Daniel Wagner
+maintainer:          me@dmwit.com
+copyright:           Daniel Wagner 2014
+category:            Data
+build-type:          Simple
+cabal-version:       >=1.10
+source-repository head
+    type:            git
+    location:        https://github.com/dmwit/universe
+source-repository this
+    type:            git
+    location:        https://github.com/dmwit/universe
+    tag:             1.0
+
+library
+  exposed-modules:     Data.Universe.Instances.Base
+  other-extensions:    TypeFamilies
+  build-depends:       base >=4 && <5,
+                       containers >=0.5 && <0.6,
+                       universe-base >=1.0 && <1.1
+  default-language:    Haskell2010
