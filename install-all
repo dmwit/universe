@@ -1,0 +1,2 @@
+#!/bin/sh
+cabal install ./base ./instances/base ./instances/extended ./instances/reverse ./instances/trans ./top
