@@ -1,5 +1,8 @@
 {-# LANGUAGE TypeFamilies #-}
-module Data.Universe.Instances.Base (Universe(..), Finite(..)) where
+module Data.Universe.Instances.Base (
+	-- | Instances of 'Universe' and 'Finite' for built-in types.
+	Universe(..), Finite(..)
+	) where
 
 import Control.Monad
 import Data.Int

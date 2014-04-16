@@ -1,8 +1,8 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 module Data.Universe.Instances.Reverse (
-	-- | A convenience module that imports the submodules @Eq@, @Ord@, @Show@,
-	-- @Read@, and @Traversable@ to provide instances of these classes for
-	-- functions over finite inputs.
+	-- | A convenience module that imports the sibling modules @Eq@, @Ord@,
+	-- @Show@, @Read@, and @Traversable@ to provide instances of these classes
+	-- for functions over finite inputs.
 	) where
 
 import Data.Universe.Instances.Eq          ()

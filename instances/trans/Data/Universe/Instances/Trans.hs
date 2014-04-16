@@ -1,5 +1,8 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Data.Universe.Instances.Trans (Universe(..), Finite(..)) where
+module Data.Universe.Instances.Trans (
+	-- | Instances of 'Universe' and 'Finite' for the standard monad and functor transformers.
+	Universe(..), Finite(..)
+	) where
 
 import Control.Monad.Identity
 import Control.Monad.Reader
