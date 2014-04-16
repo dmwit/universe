@@ -10,8 +10,7 @@ import Control.Monad.Trans.Identity
 import Data.Functor.Compose
 import Data.Functor.Product
 import Data.Universe.Helpers
-import Data.Universe.Instances.Base ()
-import Data.Universe.Class
+import Data.Universe.Instances.Base
 
 instance  Universe    a                    => Universe (Identity    a) where universe  = map Identity  universe
 instance  Universe (f a)                   => Universe (IdentityT f a) where universe  = map IdentityT universe

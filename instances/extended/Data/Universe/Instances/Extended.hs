@@ -1,11 +1,13 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Data.Universe.Instances.Extended (Universe(..), Finite(..)) where
+module Data.Universe.Instances.Extended (
+	-- | Instances for 'Universe' and 'Finite' for function-like functors and the empty type.
+	Universe(..), Finite(..)
+	) where
 
 import Data.Void
 import Control.Comonad.Trans.Traced
 import Data.Functor.Rep
-import Data.Universe.Instances.Base ()
-import Data.Universe.Class
+import Data.Universe.Instances.Base
 
 instance Universe Void where universe = []
 

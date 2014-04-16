@@ -6,7 +6,6 @@ module Data.Universe.Instances.Ord (
 	) where
 
 import Data.Monoid
-import Data.Universe.Class
 import Data.Universe.Instances.Base
 import Data.Universe.Instances.Eq
 

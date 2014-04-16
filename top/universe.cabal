@@ -22,8 +22,7 @@ source-repository this
 library
   exposed-modules:     Data.Universe,
                        Data.Universe.Instances.Reverse
-  build-depends:       universe-base                 >=1.0 && <1.1,
-                       universe-instances-base       >=1.0 && <1.1,
+  build-depends:       universe-instances-base       >=1.0 && <1.1,
                        universe-instances-extended   >=1.0 && <1.1,
                        universe-reverse-instances    >=1.0 && <1.1,
                        universe-instances-trans      >=1.0 && <1.1

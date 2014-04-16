@@ -4,7 +4,6 @@ module Data.Universe.Instances.Show (
 	Show(..)
 	) where
 
-import Data.Universe.Class
 import Data.Universe.Instances.Base
 
 instance (Finite a, Show a, Show b) => Show (a -> b) where

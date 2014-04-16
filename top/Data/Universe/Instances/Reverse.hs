@@ -6,8 +6,8 @@ module Data.Universe.Instances.Reverse (
 	Eq(..), Ord(..), Show(..), Read(..), Foldable(..), Traversable(..)
 	) where
 
-import Data.Universe.Instances.Eq          ()
-import Data.Universe.Instances.Ord         ()
-import Data.Universe.Instances.Show        ()
-import Data.Universe.Instances.Read        ()
-import Data.Universe.Instances.Traversable ()
+import Data.Universe.Instances.Eq
+import Data.Universe.Instances.Ord
+import Data.Universe.Instances.Show
+import Data.Universe.Instances.Read
+import Data.Universe.Instances.Traversable
