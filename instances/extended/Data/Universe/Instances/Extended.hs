@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Data.Universe.Instances.Extended where
+module Data.Universe.Instances.Extended (Universe(..), Finite(..)) where
 
 import Data.Void
 import Control.Comonad.Trans.Traced

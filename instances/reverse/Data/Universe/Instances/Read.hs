@@ -1,6 +1,7 @@
 module Data.Universe.Instances.Read (
 	-- | A 'Read' instance for functions, given the input is 'Finite' and
 	-- 'Ord' and both the input and output are 'Read'.
+	Read(..)
 	) where
 
 import Data.Map (fromList, (!))

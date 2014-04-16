@@ -1,6 +1,7 @@
 module Data.Universe.Instances.Eq (
 	-- | An 'Eq' instance for functions, given the input is 'Finite' and the
 	-- output is 'Eq'. Compares pointwise.
+	Eq(..)
 	) where
 
 import Data.Monoid

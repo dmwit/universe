@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Data.Universe.Instances.Trans where
+module Data.Universe.Instances.Trans (Universe(..), Finite(..)) where
 
 import Control.Monad.Identity
 import Control.Monad.Reader

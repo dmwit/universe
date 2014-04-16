@@ -1,4 +1,4 @@
-module Data.Universe.Instances.Containers where
+module Data.Universe.Instances.Containers (Universe(..), Finite(..)) where
 
 -- TODO
 -- plausible inclusions:

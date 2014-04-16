@@ -1,5 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
-module Data.Universe.Instances.Base where
+module Data.Universe.Instances.Base (Universe(..), Finite(..)) where
 
 import Control.Monad
 import Data.Int

@@ -2,6 +2,7 @@ module Data.Universe.Instances.Traversable (
 	-- | A 'Foldable' instance for functions, given the input is 'Finite', and
 	-- a 'Traversable' instance for functions, given the input is 'Ord' and
 	-- 'Finite'.
+	Foldable(..), Traversable(..)
 	) where
 
 import Control.Applicative
