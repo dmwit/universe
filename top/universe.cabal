@@ -11,6 +11,7 @@ copyright:           Daniel Wagner 2014
 category:            Data
 build-type:          Simple
 cabal-version:       >=1.10
+extra-source-files:  changelog
 source-repository head
     type:            git
     location:        https://github.com/dmwit/universe
