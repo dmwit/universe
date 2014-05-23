@@ -1,5 +1,5 @@
 name:                universe-instances-trans
-version:             1.0
+version:             1.0.0.1
 synopsis:            Universe instances for types from the transformers and mtl packages
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
