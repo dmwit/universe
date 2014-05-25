@@ -1,4 +1,4 @@
-0.6:
+1.0:
 * split package into small pieces:
     * six packages, all dependencies of a top-level "universe" package
     * a base installation requires many fewer dependencies
