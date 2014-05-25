@@ -1,5 +1,5 @@
 name:                universe-instances-trans
-version:             1.0
+version:             1.0.0.1
 synopsis:            Universe instances for types from the transformers and mtl packages
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
@@ -21,8 +21,8 @@ source-repository this
 library
   exposed-modules:     Data.Universe.Instances.Trans
   build-depends:       base                    >=4   && <5  ,
-                       mtl                     >=1.0 && <2.2,
-                       transformers            >=0.2 && <0.4,
+                       mtl                     >=1.0 && <2.3,
+                       transformers            >=0.2 && <0.5,
                        universe-base           >=1.0 && <1.1,
                        universe-instances-base >=1.0 && <1.1
   default-language:    Haskell2010
