@@ -16,7 +16,7 @@ source-repository head
 source-repository this
     type:            git
     location:        https://github.com/dmwit/universe
-    tag:             1.0
+    tag:             1.0.0.1
 
 library
   exposed-modules:     Data.Universe.Instances.Trans
