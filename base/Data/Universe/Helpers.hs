@@ -29,8 +29,12 @@ interleave = concat . transpose
 -- not exponentially so.
 diagonal :: [[a]] -> [a]
 diagonal xss = go ([], xss) where
-	go (b, []  ) = interleave b
-	go (b, e:es) = [h | h:_ <- b] ++ go (e:[t | _:t <- b],es)
+	-- it is critical for some applications that we start producing answers
+	-- before inspecting es_
+	go (b, es_) = [h | h:_ <- b] ++ case es_ of
+		[]   -> interleave ts
+		e:es -> go (e:ts, es)
+		where ts = [t | _:t <- b]
 
 -- | Fair 2-way interleaving.
 (+++) :: [a] -> [a] -> [a]
