@@ -1,0 +1,10 @@
+flags: {}
+packages:
+- base/
+- instances/base/
+- instances/extended/
+- instances/reverse/
+- instances/trans/
+- top/
+extra-deps: []
+resolver: lts-3.1

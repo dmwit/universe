@@ -20,9 +20,9 @@ source-repository this
 
 library
   exposed-modules:     Data.Universe.Instances.Extended
-  build-depends:       adjunctions             >=4   && <4.1,
+  build-depends:       adjunctions             >=4   && <4.3,
                        base                    >=4   && <5  ,
-                       comonad                 >=4   && <4.1,
+                       comonad                 >=4   && <4.3,
                        universe-instances-base >=1.0 && <1.1,
-                       void                    >=0.1 && <0.7
+                       void                    >=0.1 && <0.8
   default-language:    Haskell2010
