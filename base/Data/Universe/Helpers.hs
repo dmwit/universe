@@ -36,7 +36,7 @@ diagonal = concat . diagonals
 -- the output will be a list whose elements are each from a distinct input
 -- list.
 diagonals :: [[a]] -> [[a]]
-diagonals = go [] where
+diagonals = tail . go [] where
 	-- it is critical for some applications that we start producing answers
 	-- before inspecting es_
 	go b es_ = [h | h:_ <- b] : case es_ of
