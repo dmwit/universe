@@ -28,11 +28,19 @@ interleave = concat . transpose
 -- output list. Elements from lists at lower index occur more frequently, but
 -- not exponentially so.
 diagonal :: [[a]] -> [a]
-diagonal = go [] where
+diagonal = concat . diagonals
+
+-- | Like 'diagonal', but expose a tiny bit more (non-semantic) information:
+-- if you lay out the input list in two dimensions, each list in the result
+-- will be one of the diagonals of the input. In particular, each element of
+-- the output will be a list whose elements are each from a distinct input
+-- list.
+diagonals :: [[a]] -> [[a]]
+diagonals = go [] where
 	-- it is critical for some applications that we start producing answers
 	-- before inspecting es_
-	go b es_ = [h | h:_ <- b] ++ case es_ of
-		[]   -> interleave ts
+	go b es_ = [h | h:_ <- b] : case es_ of
+		[]   -> transpose ts
 		e:es -> go (e:ts) es
 		where ts = [t | _:t <- b]
 
