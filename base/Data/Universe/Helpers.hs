@@ -28,12 +28,12 @@ interleave = concat . transpose
 -- output list. Elements from lists at lower index occur more frequently, but
 -- not exponentially so.
 diagonal :: [[a]] -> [a]
-diagonal xss = go ([], xss) where
+diagonal = go [] where
 	-- it is critical for some applications that we start producing answers
 	-- before inspecting es_
-	go (b, es_) = [h | h:_ <- b] ++ case es_ of
+	go b es_ = [h | h:_ <- b] ++ case es_ of
 		[]   -> interleave ts
-		e:es -> go (e:ts, es)
+		e:es -> go (e:ts) es
 		where ts = [t | _:t <- b]
 
 -- | Fair 2-way interleaving.
