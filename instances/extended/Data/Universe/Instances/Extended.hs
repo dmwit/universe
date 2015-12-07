@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Data.Universe.Instances.Extended (
 	-- | Instances for 'Universe' and 'Finite' for function-like functors and the empty type.
 	Universe(..), Finite(..)
@@ -7,6 +8,7 @@ module Data.Universe.Instances.Extended (
 import Data.Void
 import Control.Comonad.Trans.Traced
 import Data.Functor.Rep
+import Data.Universe.Helpers
 import Data.Universe.Instances.Base
 
 instance Universe Void where universe = []
@@ -28,11 +30,11 @@ instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Univers
 	=> Universe (TracedT s f a)
 	where universe = map tabulate universe
 
-instance Finite Void
+instance Finite Void where cardinality _ = 0
 
 instance (Representable f, Finite (Rep f), Ord (Rep f), Finite a)
 	=> Finite (Co f a)
-	where universeF = map tabulate universeF
+	where universeF = map tabulate universeF; cardinality _ = cardinality ([] :: [Rep (Co        f) -> a])
 instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Finite a)
 	=> Finite (TracedT s f a)
-	where universeF = map tabulate universeF
+	where universeF = map tabulate universeF; cardinality _ = cardinality ([] :: [Rep (TracedT s f) -> a])

@@ -8,6 +8,7 @@ module Data.Universe.Class
 	, Finite(..)
 	) where
 
+import Data.List (genericLength)
 import Data.Universe.Helpers
 
 -- | Creating an instance of this class is a declaration that your type is
@@ -22,9 +23,14 @@ class Universe a where
 #endif
 
 -- | Creating an instance of this class is a declaration that your 'universe'
--- eventually ends. Minimal definition: no methods defined. By default,
--- @universeF = universe@, but for some types (like 'Either') the 'universeF'
--- method may have a more intuitive ordering.
+-- eventually ends (enforced by the law below). Minimal definition: no methods
+-- defined. By default, @universeF = universe@, but for some types (like
+-- 'Either') the 'universeF' method may have a more intuitive ordering.
+--
+-- There is one class law: @cardinality = genericLength@.
 class Universe a => Finite a where
 	universeF :: [a]
 	universeF = universe
+
+	cardinality :: proxy a -> Integer
+	cardinality = genericLength . ((\_ -> universeF) :: Finite t => proxy t -> [t])

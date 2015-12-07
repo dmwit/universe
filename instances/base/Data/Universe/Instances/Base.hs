@@ -1,4 +1,5 @@
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Data.Universe.Instances.Base (
 	-- | Instances of 'Universe' and 'Finite' for built-in types.
 	Universe(..), Finite(..)
@@ -85,41 +86,55 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 
-instance Finite ()
-instance Finite Bool
-instance Finite Char
-instance Finite Ordering
-instance Finite Int
-instance Finite Int8
-instance Finite Int16
-instance Finite Int32
-instance Finite Int64
-instance Finite Word
-instance Finite Word8
-instance Finite Word16
-instance Finite Word32
-instance Finite Word64
+instance Finite ()       where cardinality _ = 1
+instance Finite Bool     where cardinality _ = 2
+instance Finite Char     where cardinality _ = 1114112
+instance Finite Ordering where cardinality _ = 3
+instance Finite Int      where cardinality _ = fromIntegral (maxBound :: Int) - fromIntegral (minBound :: Int) + 1
+instance Finite Int8     where cardinality _ = 2^8
+instance Finite Int16    where cardinality _ = 2^16
+instance Finite Int32    where cardinality _ = 2^32
+instance Finite Int64    where cardinality _ = 2^64
+instance Finite Word     where cardinality _ = fromIntegral (maxBound :: Word) - fromIntegral (minBound :: Word) + 1
+instance Finite Word8    where cardinality _ = 2^8
+instance Finite Word16   where cardinality _ = 2^16
+instance Finite Word32   where cardinality _ = 2^32
+instance Finite Word64   where cardinality _ = 2^64
 
-instance  Finite a            => Finite (Maybe  a  )
-instance (Finite a, Finite b) => Finite (Either a b) where universeF = map Left universe ++ map Right universe
+instance  Finite a            => Finite (Maybe  a  ) where cardinality _ = 1 + cardinality ([] :: [a])
+instance (Finite a, Finite b) => Finite (Either a b) where
+	universeF = map Left universe ++ map Right universe
+	cardinality _ = cardinality ([] :: [a]) + cardinality ([] :: [b])
 
-instance (Finite a, Finite b) => Finite (a, b) where universeF = liftM2 (,) universeF universeF
-instance (Finite a, Finite b, Finite c) => Finite (a, b, c) where universeF = liftM3 (,,) universeF universeF universeF
-instance (Finite a, Finite b, Finite c, Finite d) => Finite (a, b, c, d) where universeF = liftM4 (,,,) universeF universeF universeF universeF
-instance (Finite a, Finite b, Finite c, Finite d, Finite e) => Finite (a, b, c, d, e) where universeF = liftM5 (,,,,) universeF universeF universeF universeF universeF
+instance (Finite a, Finite b) => Finite (a, b) where
+	universeF = liftM2 (,) universeF universeF
+	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b])]
 
-instance Finite All where universeF = map All universeF
-instance Finite Any where universeF = map Any universeF
-instance Finite a => Finite (Sum     a) where universeF = map Sum     universeF
-instance Finite a => Finite (Product a) where universeF = map Product universeF
-instance Finite a => Finite (Dual    a) where universeF = map Dual    universeF
-instance Finite a => Finite (First   a) where universeF = map First   universeF
-instance Finite a => Finite (Last    a) where universeF = map Last    universeF
+instance (Finite a, Finite b, Finite c) => Finite (a, b, c) where
+	universeF = liftM3 (,,) universeF universeF universeF
+	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c])]
+
+instance (Finite a, Finite b, Finite c, Finite d) => Finite (a, b, c, d) where
+	universeF = liftM4 (,,,) universeF universeF universeF universeF
+	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c]), cardinality ([] :: [d])]
+
+instance (Finite a, Finite b, Finite c, Finite d, Finite e) => Finite (a, b, c, d, e) where
+	universeF = liftM5 (,,,,) universeF universeF universeF universeF universeF
+	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c]), cardinality ([] :: [d]), cardinality ([] :: [e])]
+
+instance Finite All where universeF = map All universeF; cardinality _ = 2
+instance Finite Any where universeF = map Any universeF; cardinality _ = 2
+instance Finite a => Finite (Sum     a) where universeF = map Sum     universeF; cardinality = cardinality . unwrapProxy Sum
+instance Finite a => Finite (Product a) where universeF = map Product universeF; cardinality = cardinality . unwrapProxy Product
+instance Finite a => Finite (Dual    a) where universeF = map Dual    universeF; cardinality = cardinality . unwrapProxy Dual
+instance Finite a => Finite (First   a) where universeF = map First   universeF; cardinality = cardinality . unwrapProxy First
+instance Finite a => Finite (Last    a) where universeF = map Last    universeF; cardinality = cardinality . unwrapProxy Last
 
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
 	universeF = map tableToFunction tables where
 		tables          = sequence [universeF | _ <- monoUniverse]
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
+	cardinality _ = cardinality ([] :: [b]) ^ cardinality ([] :: [a])
 
 -- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
