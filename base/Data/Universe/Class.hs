@@ -8,6 +8,7 @@ module Data.Universe.Class
 	, Finite(..)
 	) where
 
+import Data.List (genericLength)
 import Data.Universe.Helpers
 
 -- | Creating an instance of this class is a declaration that your type is
@@ -41,6 +42,7 @@ class Universe a where
 -- @
 -- 'elem' x 'universeF'                       -- any inhabitant has a finite index
 -- 'length' ('filter' (== x) 'universeF') == 1  -- should terminate
+-- (\xs -> 'cardinality' xs == 'genericLength' xs) 'universeF'
 -- @
 --
 -- /Note:/ @'elemIndex' x 'universe' == 'elemIndex' x 'universeF'@
@@ -56,3 +58,6 @@ class Universe a where
 class Universe a => Finite a where
 	universeF :: [a]
 	universeF = universe
+
+	cardinality :: proxy a -> Integer
+	cardinality = genericLength . ((\_ -> universeF) :: Finite t => proxy t -> [t])

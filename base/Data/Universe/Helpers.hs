@@ -2,7 +2,31 @@ module Data.Universe.Helpers (
 	-- | This module is for functions that are useful for writing instances,
 	-- but not necessarily for using them (and hence are not exported by the
 	-- main module to avoid cluttering up the namespace).
-	module Data.Universe.Helpers
+
+	-- * Building lists
+	universeDef,
+	interleave,
+	diagonal,
+	diagonals,
+	(+++),
+	(+*+),
+	choices,
+
+	-- * Building cardinalities
+	-- | These functions are handy for inheriting the definition of
+	-- 'Data.Universe.Class.cardinality' in a newtype instance. For example,
+	-- one might write
+	--
+	-- > newtype Foo = Foo Bar
+	-- > instance Finite Foo where cardinality = cardinality . unwrapProxy Foo
+	unwrapProxy,
+	unwrapProxy1of2,
+	unwrapProxy2of2,
+
+	-- * Debugging
+	-- | These functions exist primarily as a specification to test against.
+	unfairCartesianProduct,
+	unfairChoices
 	) where
 
 import Data.List
@@ -64,10 +88,25 @@ xs +*+ ys = diagonal [[(x, y) | x <- xs] | y <- ys]
 choices :: [[a]] -> [[a]]
 choices = foldr ((map (uncurry (:)) .) . (+*+)) [[]]
 
+-- | Convert a proxy for a newtype to a proxy for the contained type, given the
+-- newtype's constructor.
+unwrapProxy     :: (a -> b)      -> proxy b -> [a]
+
+-- | Convert a proxy for a pair-like type to a proxy for the first part of the
+-- pair, given a pairing-like constructor.
+unwrapProxy1of2 :: (a -> b -> c) -> proxy c -> [a]
+--
+-- | Convert a proxy for a pair-like type to a proxy for the second part of the
+-- pair, given a pairing-like constructor.
+unwrapProxy2of2 :: (a -> b -> c) -> proxy c -> [b]
+
+unwrapProxy     _ _ = []
+unwrapProxy1of2 _ _ = []
+unwrapProxy2of2 _ _ = []
+
 -- | Very unfair 2-way Cartesian product: same guarantee as the slightly unfair
 -- one, except that lower indices may occur as the @fst@ part of the tuple
--- exponentially more frequently. This mainly exists as a specification to test
--- against.
+-- exponentially more frequently.
 unfairCartesianProduct :: [a] -> [b] -> [(a,b)]
 unfairCartesianProduct _  [] = [] -- special case: don't want to walk down xs forever hoping one of them will produce a nonempty thing
 unfairCartesianProduct xs ys = go xs ys where
@@ -76,6 +115,6 @@ unfairCartesianProduct xs ys = go xs ys where
 
 -- | Very unfair n-way Cartesian product: same guarantee as the slightly unfair
 -- one, but not as good in the same sense that the very unfair 2-way product is
--- worse than the slightly unfair 2-way product. Mainly for testing purposes.
+-- worse than the slightly unfair 2-way product.
 unfairChoices :: [[a]] -> [[a]]
 unfairChoices = foldr ((map (uncurry (:)) .) . unfairCartesianProduct) [[]]

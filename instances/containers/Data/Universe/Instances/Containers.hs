@@ -8,6 +8,7 @@ module Data.Universe.Instances.Containers (
     ) where
 
 import Data.Universe.Class
+import Data.Universe.Helpers
 
 import qualified Data.Set as Set
 -- import qualified Data.Map as Map
@@ -23,7 +24,8 @@ instance (Ord a, Universe a, Show a) => Universe (Set.Set a) where
             inter (y:ys) = y : Set.insert x y : inter ys
 
 
-instance (Ord a, Finite a, Show a) => Finite (Set.Set a)
+instance (Ord a, Finite a, Show a) => Finite (Set.Set a) where
+    cardinality p = 2 ^ cardinality (unwrapProxy Set.singleton p)
 
 -- This is tricky
 -- instance (Ord k, Universe k, Universe v) => Universe (Map.Map k v)
