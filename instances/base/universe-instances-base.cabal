@@ -28,6 +28,7 @@ library
 
 test-suite tests
   default-language:    Haskell2010
+  other-extensions:    ScopedTypeVariables
   type:                exitcode-stdio-1.0
   main-is:             Tests.hs
   hs-source-dirs:      tests

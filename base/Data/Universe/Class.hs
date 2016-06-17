@@ -15,11 +15,14 @@ import Data.Universe.Helpers
 -- particular, you promise that any finite inhabitant has a finite index in
 -- 'universe', and that no inhabitant appears at two different finite indices.
 --
+-- Well-behaved instance should produce elements lazily.
+--
 -- /Laws:/
 --
 -- @
--- 'elem' x 'universe'                       -- any inhabitant has a finite index
--- 'length' ('filter' (== x) 'universe') == 1  -- if terminates
+-- 'elem' x 'universe'                    -- any inhabitant has a finite index
+-- let pfx = 'take' n 'universe'          -- any finite prefix of universe has unique elements
+-- in 'length' pfx = 'length' (nub pfx)
 -- @
 class Universe a where
 	universe :: [a]
