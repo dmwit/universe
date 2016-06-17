@@ -33,5 +33,5 @@ test-suite tests
   main-is:             Tests.hs
   hs-source-dirs:      tests
   ghc-options:         -Wall
-  build-depends:       base,  universe-base, universe-instances-base,
+  build-depends:       base, containers, universe-base, universe-instances-base,
                        QuickCheck >=2.8.2 && <2.9

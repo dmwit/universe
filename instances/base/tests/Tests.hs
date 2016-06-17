@@ -6,6 +6,8 @@ import Data.Int (Int8)
 import Test.QuickCheck
 import Data.Universe.Instances.Base (Universe(..), Finite(..))
 
+import qualified Data.Set as Set
+
 -- | Proxy type
 data P a = P
 
@@ -17,13 +19,16 @@ universeLaw :: (Eq a, Show a, Arbitrary a, Universe a) => P a -> a -> Property
 universeLaw _ x = counterexample (show x) (elem x universe)
 
 universeProdLaw
-    :: forall a. (Eq a, Show a, Arbitrary a, Universe a)
+    :: forall a. (Ord a, Show a, Arbitrary a, Universe a)
     => P a -> NonNegative Int -> Property
-universeProdLaw _ (NonNegative n) = label (show n) $
+universeProdLaw _ (NonNegative n) = label (show $ div n 10) $
     let pfx = take n universe :: [a]
-    in length pfx === length (nub pfx)
+    in length pfx === nubLength pfx
 
-universeLaws :: (Eq a, Show a, Arbitrary a, Universe a) => P a -> Property
+nubLength :: Ord a => [a] -> Int
+nubLength = Set.size . Set.fromList
+
+universeLaws :: (Ord a, Show a, Arbitrary a, Universe a) => P a -> Property
 universeLaws p = universeLaw p .&&. universeProdLaw p
 
 -------------------------------------------------------------------------------
@@ -36,7 +41,7 @@ finiteLaw1 _ x = counterexample (show x) (elem x universeF)
 finiteLaw2 :: (Eq a, Show a, Arbitrary a, Finite a) => P a -> a -> Property
 finiteLaw2 _ x = length (filter (== x) universeF) === 1
 
-finiteLaws :: (Eq a, Show a, Arbitrary a, Finite a) => P a -> Property
+finiteLaws :: (Ord a, Show a, Arbitrary a, Finite a) => P a -> Property
 finiteLaws p = universeLaws p .&&. finiteLaw1 p .&&. finiteLaw2 p
 
 -------------------------------------------------------------------------------
