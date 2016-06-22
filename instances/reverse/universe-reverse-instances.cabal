@@ -19,7 +19,8 @@ source-repository this
     tag:             1.1
 
 library
-  exposed-modules:     Data.Universe.Instances.Eq,
+  exposed-modules:     Data.Universe.Instances.Enum,
+                       Data.Universe.Instances.Eq,
                        Data.Universe.Instances.Ord,
                        Data.Universe.Instances.Read,
                        Data.Universe.Instances.Show,
