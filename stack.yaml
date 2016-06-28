@@ -1,10 +1,11 @@
-flags: {}
+resolver: lts-6.3
 packages:
 - base/
 - instances/base/
+- instances/containers/
 - instances/extended/
 - instances/reverse/
 - instances/trans/
 - top/
 extra-deps: []
-resolver: lts-3.1
+flags: {}

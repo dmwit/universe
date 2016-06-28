@@ -1,6 +1,6 @@
-name:                universe-instances-base
+name:                universe-instances-containers
 version:             1.0
-synopsis:            Universe instances for types from the base package
+synopsis:            Universe instances for types from the containers package
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -19,8 +19,8 @@ source-repository this
     tag:             1.0
 
 library
-  exposed-modules:     Data.Universe.Instances.Base
-  other-extensions:    TypeFamilies
+  exposed-modules:     Data.Universe.Instances.Containers
+  ghc-options:         -Wall
   build-depends:       base >=4 && <5,
                        containers >=0.5 && <0.6,
                        universe-base >=1.0 && <1.1
@@ -33,5 +33,6 @@ test-suite tests
   main-is:             Tests.hs
   hs-source-dirs:      tests
   ghc-options:         -Wall
-  build-depends:       base, containers, universe-base, universe-instances-base,
+  build-depends:       base, containers, universe-base,
+                       universe-instances-base, universe-instances-containers,
                        QuickCheck >=2.8.2 && <2.9
