@@ -4,7 +4,8 @@ module Main (main) where
 import Data.List (elemIndex, nub)
 import Data.Int (Int8)
 import Test.QuickCheck
-import Data.Universe.Instances.Base (Universe(..), Finite(..))
+import Data.Universe.Class
+import Data.Universe.Instances.Base ()
 
 import qualified Data.Set as Set
 

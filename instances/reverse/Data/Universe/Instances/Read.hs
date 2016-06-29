@@ -6,7 +6,7 @@ module Data.Universe.Instances.Read (
     ) where
 
 import Data.Map (fromList, (!))
-import Data.Universe.Instances.Base
+import Data.Universe.Class
 
 -- actually, the "Finite a" part of the context wouldn't be inferred if you
 -- asked GHC -- but it's kind of hopeless otherwise!

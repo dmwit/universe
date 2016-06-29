@@ -5,7 +5,7 @@ module Data.Universe.Instances.Show (
     Show(..)
     ) where
 
-import Data.Universe.Instances.Base
+import Data.Universe.Class
 
 instance (Finite a, Show a, Show b) => Show (a -> b) where
     showsPrec n f = showsPrec n [(a, f a) | a <- universeF]

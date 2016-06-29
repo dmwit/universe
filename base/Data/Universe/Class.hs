@@ -2,11 +2,17 @@
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
+-- | Bottoms are ignored for this entire module: only fully-defined inhabitants
+-- are considered inhabitants.
 module Data.Universe.Class
-    ( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
+    (
+    -- * Classes
       Universe(..)
     , Finite(..)
-    , Univ(..)
+    , Univ
+    -- * Lists
+    , universe
+    , universeF
     ) where
 
 import Data.Universe.Helpers
@@ -26,18 +32,14 @@ import Data.Universe.Helpers
 -- in 'length' pfx = 'length' (nub pfx)
 -- @
 class Universe a where
-    -- | Memoised CAF. Use with care as the expanded value will live forever.
-    --
-    -- See <http://stackoverflow.com/questions/6090932/how-to-make-a-caf-not-a-caf-in-haskell>
-    universe :: [a]
-    universe = getUniv universeUniv
-
-    -- | 'Univ' containing all values of @a@.
     universeUniv :: Univ a
 #ifdef DEFAULT_SIGNATURES
     default universeUniv :: (Enum a, Bounded a) => Univ a
     universeUniv = universeDef
 #endif
+
+universe :: Universe a => [a]
+universe = getUniv universeUniv
 
 -- | Creating an instance of this class is a declaration that your 'universe'
 -- eventually ends. Minimal definition: no methods defined. By default,
@@ -62,8 +64,8 @@ class Universe a where
 -- Just 1
 -- @
 class Universe a => Finite a where
-    universeF :: [a]
-    universeF = getUniv universeUnivF
-
     universeUnivF :: Univ a
     universeUnivF = universeUniv
+
+universeF :: Finite a => [a]
+universeF = getUniv universeUnivF

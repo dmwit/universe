@@ -3,8 +3,9 @@ module Main (main) where
 
 import Data.Set (Set)
 import Test.QuickCheck
+import Data.Universe.Class
 import Data.Universe.Instances.Base ()
-import Data.Universe.Instances.Containers (Universe(..), Finite(..))
+import Data.Universe.Instances.Containers ()
 
 import qualified Data.Set as Set
 

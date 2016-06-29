@@ -6,8 +6,10 @@ module Data.Universe.Instances.Ord (
     Ord(..)
     ) where
 
-import Data.Universe.Instances.Base
+import Data.Monoid
+import Data.Universe.Class
 import Data.Universe.Instances.Eq ()
+import Prelude
 
 instance (Finite a, Ord b) => Ord (a -> b) where
     f `compare` g = mconcat [f x `compare` g x | x <- universeF]

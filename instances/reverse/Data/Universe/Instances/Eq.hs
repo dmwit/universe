@@ -5,7 +5,7 @@ module Data.Universe.Instances.Eq (
     Eq(..)
     ) where
 
-import Data.Universe.Instances.Base
+import Data.Universe.Class
 
 instance (Finite a, Eq b) => Eq (a -> b) where
     f == g = and [f x == g x | x <- universeF]
