@@ -8,12 +8,13 @@ module Data.Universe.Instances.Containers (
     ) where
 
 import Data.Universe.Class
+import Data.Universe.Helpers
 
 import qualified Data.Set as Set
 -- import qualified Data.Map as Map
 
 instance (Ord a, Universe a, Show a) => Universe (Set.Set a) where
-    universe = Set.empty : go universe
+    universeUniv = univCons Set.empty $ Univ $ go universe
       where
         go []     = []
         go (x:xs) = Set.singleton x : inter (go xs)

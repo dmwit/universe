@@ -1,5 +1,5 @@
 name:                universe-reverse-instances
-version:             1.0
+version:             2
 synopsis:            instances of standard classes that are made possible by enumerations
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
@@ -26,5 +26,6 @@ library
                        Data.Universe.Instances.Traversable
   build-depends:       base                    >=4   && <5  ,
                        containers              >=0.4 && <0.6,
-                       universe-instances-base >=1.0 && <1.1
+                       universe-instances-base >=2   && <3
   default-language:    Haskell2010
+  ghc-options:         -Wall

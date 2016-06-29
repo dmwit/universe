@@ -1,5 +1,5 @@
 name:                universe-instances-containers
-version:             1.0
+version:             2
 synopsis:            Universe instances for types from the containers package
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
@@ -23,7 +23,7 @@ library
   ghc-options:         -Wall
   build-depends:       base >=4 && <5,
                        containers >=0.4 && <0.6,
-                       universe-base >=1.0 && <1.1
+                       universe-base >=2 && <3
   default-language:    Haskell2010
 
 test-suite tests
