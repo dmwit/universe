@@ -1,3 +1,8 @@
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveFunctor      #-}
+{-# LANGUAGE DeriveFoldable     #-}
+{-# LANGUAGE DeriveTraversable  #-}
+{-# LANGUAGE NoImplicitPrelude  #-}
 module Data.Universe.Helpers (
     -- | This module is for functions that are useful for writing instances,
     -- but not necessarily for using them (and hence are not exported by the
@@ -5,17 +10,17 @@ module Data.Universe.Helpers (
     module Data.Universe.Helpers
     ) where
 
-import Control.Applicative
-import Data.List
-import Prelude
+import Prelude.Compat
+
+import Data.Typeable (Typeable)
+import Data.Semigroup (Semigroup (..))
+import Data.List.Compat
 
 -- | Type synonym representing container of elements.
 --
 -- 'Univ' has one invariant: all elements in @'Univ' a@ are distinct.
 newtype Univ a = Univ { getUniv :: [a] }
-
-instance Functor Univ where
-    fmap f = Univ . fmap f . getUniv
+   deriving (Functor, Foldable, Traversable, Typeable)
 
 instance Applicative Univ where
     pure = Univ . return
@@ -30,6 +35,14 @@ emptyUniv = Univ []
 
 univCons :: a -> Univ a -> Univ a
 univCons x (Univ xs) = Univ (x : xs)
+
+-- | Appending is fair interleaving, associativity rule holds if one consider equality on `Univ` as sets.
+instance Semigroup (Univ a) where
+   (<>) = (+++)
+
+instance Monoid (Univ a) where
+    mempty = emptyUniv
+    mappend = (+++)
 
 -- | For many types, the 'universe' should be @[minBound .. maxBound]@;
 -- 'universeDef' makes it easy to make such types an instance of 'Universe' via

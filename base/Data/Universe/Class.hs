@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
@@ -15,6 +16,9 @@ module Data.Universe.Class
     , universeF
     ) where
 
+import Prelude.Compat
+
+import Data.Semigroup (Semigroup (..))
 import Data.Universe.Helpers
 
 -- | Creating an instance of this class is a declaration that your type is
