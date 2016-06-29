@@ -14,14 +14,14 @@ module Data.Universe.Helpers (
    diagonal,
    (+++),
    (+*+),
+   choices,
    -- * Default definitions
    universeDef,
-   -- * Internals
-   choices,
    ) where
 
 import Prelude.Compat
 
+import Control.Applicative (Alternative (..))
 import Data.Typeable (Typeable)
 import Data.Semigroup (Semigroup (..))
 import Data.List.Compat
@@ -29,22 +29,28 @@ import Data.List.Compat
 -- | Type synonym representing container of elements.
 --
 -- 'Univ' has one invariant: all elements in @'Univ' a@ are distinct.
+--
+-- See <https://hackage.haskell.org/package/control-monad-omega-0.3.1/docs/Control-Monad-Omega.html>
 newtype Univ a = Univ { getUniv :: [a] }
    deriving (Functor, Foldable, Traversable, Typeable)
 
 instance Applicative Univ where
     pure = Univ . return
-    Univ f <*> Univ x = Univ (f <*> x)
+    f <*> x = uncurry ($) <$> f +*+ x
 
 instance Monad Univ where
     return = Univ . return
     m >>= f = Univ $ getUniv m >>= getUniv . f
 
+instance Alternative Univ where
+    empty = mempty
+    (<|>) = (<>)
+
 emptyUniv :: Univ a
 emptyUniv = Univ []
 
 univCons :: a -> Univ a -> Univ a
-univCons x (Univ xs) = Univ (x : xs)
+univCons x xs = pure x <> xs
 
 -- | Appending is fair interleaving, associativity rule holds if one consider equality on `Univ` as sets.
 instance Semigroup (Univ a) where
@@ -67,13 +73,15 @@ universeDef = Univ [minBound .. maxBound]
 -- of the input lists, @v@ also has finite index in the output list. No list's
 -- elements occur more frequently (on average) than another's.
 interleave :: [Univ a] -> Univ a
-interleave = Univ .concat . transpose . fmap getUniv
+interleave = Univ . concat . transpose . fmap getUniv
 
 -- | Unfair n-way interleaving: given a possibly infinite number of (possibly
 -- infinite) lists, produce a single list such that whenever @v@ has finite
 -- index in an input list at finite index, @v@ also has finite index in the
 -- output list. Elements from lists at lower index occur more frequently, but
 -- not exponentially so.
+--
+-- TODO: `join`, check use-cases
 diagonal :: [Univ a] -> Univ a
 diagonal = Univ . concat . diagonals . fmap getUniv
 
@@ -112,14 +120,11 @@ unfairProduct xs ys = getUniv $ diagonal [Univ [(x, y) | x <- xs] | y <- ys]
 -- finite index in list i for each i, @[v1, ..., vn]@ has finite index in the
 -- output list.
 --
--- Still faired than 'sequence'.
---
--- TODO: change type to @choices :: [Univ a] -> Univ [a]@.
--- TODO: this is 'traverse', but we need to modify 'Applicative' instance.
--- See <https://hackage.haskell.org/package/control-monad-omega-0.3.1/docs/Control-Monad-Omega.html>
-choices :: [[a]] -> [[a]]
-choices = foldr ((map (uncurry (:)) .) . unfairProduct) [[]]
+-- TODO: this is probably the same as 'unfairCartesianProduct' atm.
+choices :: [Univ a] -> Univ [a]
+choices = sequenceA
 
+{-
 -- | Very unfair 2-way Cartesian product: same guarantee as the slightly unfair
 -- one, except that lower indices may occur as the @fst@ part of the tuple
 -- exponentially more frequently. This mainly exists as a specification to test
@@ -133,5 +138,6 @@ unfairCartesianProduct (Univ xs') ys        = go xs' where
 -- | Very unfair n-way Cartesian product: same guarantee as the slightly unfair
 -- one, but not as good in the same sense that the very unfair 2-way product is
 -- worse than the slightly unfair 2-way product. Mainly for testing purposes.
---unfairChoices :: [[a]] -> [[a]]
---unfairChoices = foldr ((map (uncurry (:)) .) . unfairCartesianProduct) [[]]
+unfairChoices :: [[a]] -> [[a]]
+unfairChoices = foldr ((map (uncurry (:)) .) . unfairCartesianProduct) [[]]
+-}

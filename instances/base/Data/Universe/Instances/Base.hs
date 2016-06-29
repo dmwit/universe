@@ -87,8 +87,8 @@ instance a ~ Integer => Universe (Ratio a) where universeUniv = univCons 0 $ fma
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?
 instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
-    universeUniv = Univ $ fmap tableToFunction tables where
-        tables          = choices [universe | _ <- monoUniverse]
+    universeUniv = fmap tableToFunction tables where
+        tables          = choices [universeUniv | _ <- monoUniverse]
         tableToFunction = (!) . fromList . zip monoUniverse
         Univ monoUniverse    = universeUnivF
 
@@ -124,8 +124,8 @@ instance Finite a => Finite (First   a) where universeUnivF = fmap First   unive
 instance Finite a => Finite (Last    a) where universeUnivF = fmap Last    universeUnivF
 
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
-    universeUnivF = Univ $ fmap tableToFunction tables where
-        tables          = sequence [universeF | _ <- monoUniverse]
+    universeUnivF = fmap tableToFunction tables where
+        tables          = choices [universeUniv | _ <- monoUniverse]
         tableToFunction = (!) . fromList . zip monoUniverse
         Univ monoUniverse = universeUnivF
 
