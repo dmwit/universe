@@ -3,12 +3,22 @@
 {-# LANGUAGE DeriveFoldable     #-}
 {-# LANGUAGE DeriveTraversable  #-}
 {-# LANGUAGE NoImplicitPrelude  #-}
+-- | This module is for functions that are useful for writing instances,
+-- but not necessarily for using them (and hence are not exported by the
+ -- main module to avoid cluttering up the namespace).
 module Data.Universe.Helpers (
-    -- | This module is for functions that are useful for writing instances,
-    -- but not necessarily for using them (and hence are not exported by the
-    -- main module to avoid cluttering up the namespace).
-    module Data.Universe.Helpers
-    ) where
+   -- * 'Univ' type
+   Univ(..),
+   emptyUniv,
+   univCons,
+   diagonal,
+   (+++),
+   (+*+),
+   -- * Default definitions
+   universeDef,
+   -- * Internals
+   choices,
+   ) where
 
 import Prelude.Compat
 
@@ -101,6 +111,12 @@ unfairProduct xs ys = getUniv $ diagonal [Univ [(x, y) | x <- xs] | y <- ys]
 -- (possibly infinite) lists, produce a single list such that whenever @vi@ has
 -- finite index in list i for each i, @[v1, ..., vn]@ has finite index in the
 -- output list.
+--
+-- Still faired than 'sequence'.
+--
+-- TODO: change type to @choices :: [Univ a] -> Univ [a]@.
+-- TODO: this is 'traverse', but we need to modify 'Applicative' instance.
+-- See <https://hackage.haskell.org/package/control-monad-omega-0.3.1/docs/Control-Monad-Omega.html>
 choices :: [[a]] -> [[a]]
 choices = foldr ((map (uncurry (:)) .) . unfairProduct) [[]]
 

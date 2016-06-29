@@ -17,8 +17,8 @@ module Data.Universe.Class
     ) where
 
 import Prelude.Compat
+import Data.Foldable (toList)
 
-import Data.Semigroup (Semigroup (..))
 import Data.Universe.Helpers
 
 -- | Creating an instance of this class is a declaration that your type is
@@ -43,7 +43,7 @@ class Universe a where
 #endif
 
 universe :: Universe a => [a]
-universe = getUniv universeUniv
+universe = toList universeUniv
 
 -- | Creating an instance of this class is a declaration that your 'universe'
 -- eventually ends. Minimal definition: no methods defined. By default,
@@ -72,4 +72,4 @@ class Universe a => Finite a where
     universeUnivF = universeUniv
 
 universeF :: Finite a => [a]
-universeF = getUniv universeUnivF
+universeF = toList universeUnivF
