@@ -1,5 +1,5 @@
 name:                universe
-version:             1.0
+version:             2
 synopsis:            Classes for types where we know all the values
 description:         Munge finite and recursively enumerable types
 homepage:            https://github.com/dmwit/universe
@@ -22,10 +22,11 @@ source-repository this
 
 library
   exposed-modules:     Data.Universe,
-                       Data.Universe.Instances,
                        Data.Universe.Instances.Reverse
-  build-depends:       universe-instances-base       >=1.0 && <1.1,
-                       universe-instances-extended   >=1.0 && <1.1,
-                       universe-reverse-instances    >=1.0 && <1.1,
-                       universe-instances-trans      >=1.0 && <1.1
+  build-depends:       universe-base                 >=2 && <2.1,
+                       universe-instances-base       >=2 && <3,
+                       universe-instances-containers >=2 && <3,
+                       universe-instances-extended   >=2 && <3,
+                       universe-reverse-instances    >=2 && <3,
+                       universe-instances-trans      >=2 && <3
   default-language:    Haskell2010

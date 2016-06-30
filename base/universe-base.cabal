@@ -1,5 +1,5 @@
 name:                universe-base
-version:             1.0.2.1
+version:             2
 synopsis:            A class for finite and recursively enumerable types and some helper functions for enumerating them
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
@@ -30,8 +30,17 @@ source-repository this
 library
   exposed-modules:     Data.Universe.Class, Data.Universe.Helpers
   other-extensions:    CPP
-  build-depends:       base >=4 && <5
+                       NoImplicitPrelude
+                       DeriveDataTypeable
+                       DeriveFunctor
+                       DeriveFoldable
+                       DeriveTraversable
+                       NoImplicitPrelude
+  build-depends:       base >= 4.3 && <4.10, base-compat >=0.9.0 && <0.10
   default-language:    Haskell2010
+  ghc-options:         -Wall
   if impl(ghc >= 7.4)
     cpp-options:       -DDEFAULT_SIGNATURES
     other-extensions:  DefaultSignatures
+  if !impl(ghc >= 8.0)
+    build-depends: semigroups >= 0.16

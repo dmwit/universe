@@ -1,12 +1,23 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE NoImplicitPrelude #-}
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
+-- | Bottoms are ignored for this entire module: only fully-defined inhabitants
+-- are considered inhabitants.
 module Data.Universe.Class
-	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
-	  Universe(..)
-	, Finite(..)
-	) where
+    (
+    -- * Classes
+      Universe(..)
+    , Finite(..)
+    , Univ
+    -- * Lists
+    , universe
+    , universeF
+    ) where
+
+import Prelude.Compat
+import Data.Foldable (toList)
 
 import Data.Universe.Helpers
 
@@ -25,11 +36,14 @@ import Data.Universe.Helpers
 -- in 'length' pfx = 'length' (nub pfx)
 -- @
 class Universe a where
-	universe :: [a]
+    universeUniv :: Univ a
 #ifdef DEFAULT_SIGNATURES
-	default universe :: (Enum a, Bounded a) => [a]
-	universe = universeDef
+    default universeUniv :: (Enum a, Bounded a) => Univ a
+    universeUniv = universeDef
 #endif
+
+universe :: Universe a => [a]
+universe = toList universeUniv
 
 -- | Creating an instance of this class is a declaration that your 'universe'
 -- eventually ends. Minimal definition: no methods defined. By default,
@@ -54,5 +68,8 @@ class Universe a where
 -- Just 1
 -- @
 class Universe a => Finite a where
-	universeF :: [a]
-	universeF = universe
+    universeUnivF :: Univ a
+    universeUnivF = universeUniv
+
+universeF :: Finite a => [a]
+universeF = toList universeUnivF
