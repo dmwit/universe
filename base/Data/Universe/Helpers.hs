@@ -13,7 +13,6 @@ module Data.Universe.Helpers (
    univCons,
    univUncons,
    univFromList,
-   diagonal,
    (+++),
    (+*+),
    choices,
@@ -47,7 +46,7 @@ instance Applicative Univ where
 
 instance Monad Univ where
     return = Univ . return
-    m >>= f = Univ $ getUniv m >>= getUniv . f
+    m >>= f = diagonal $ fmap f m
 
 instance Alternative Univ where
     empty = mempty
@@ -97,8 +96,8 @@ interleave = Univ . concat . transpose . fmap getUniv
 -- not exponentially so.
 --
 -- TODO: `join`, check use-cases
-diagonal :: [Univ a] -> Univ a
-diagonal = Univ . concat . diagonals . fmap getUniv
+diagonal :: Univ (Univ a) -> Univ a
+diagonal = Univ . concat . diagonals . fmap getUniv . getUniv
 
 -- | Like 'diagonal', but expose a tiny bit more (non-semantic) information:
 -- if you lay out the input list in two dimensions, each list in the result
@@ -128,7 +127,7 @@ Univ xs +*+ Univ ys = Univ $ unfairProduct xs ys
 
 unfairProduct :: [a] -> [b] -> [(a,b)]
 unfairProduct []  _ = [] -- special case: don't want to construct an infinite list of empty lists to pass to diagonal
-unfairProduct xs ys = getUniv $ diagonal [Univ [(x, y) | x <- xs] | y <- ys]
+unfairProduct xs ys = getUniv $ diagonal $ Univ [Univ [(x, y) | x <- xs] | y <- ys]
 
 -- | Slightly unfair n-way Cartesian product: given a finite number of
 -- (possibly infinite) lists, produce a single list such that whenever @vi@ has
