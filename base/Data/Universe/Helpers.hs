@@ -24,6 +24,7 @@ module Data.Universe.Helpers (
 import Prelude.Compat
 
 import Control.Applicative (Alternative (..))
+import Data.Foldable (toList)
 import Data.Typeable (Typeable)
 import Data.Semigroup (Semigroup (..))
 import Data.List.Compat
@@ -35,6 +36,10 @@ import Data.List.Compat
 -- See <https://hackage.haskell.org/package/control-monad-omega-0.3.1/docs/Control-Monad-Omega.html>
 newtype Univ a = Univ { getUniv :: [a] }
    deriving (Functor, Foldable, Traversable, Typeable)
+
+-- | This instance is useful in debugging, outputs at most 50 first items.
+instance Show a => Show (Univ a) where
+    show = show . take 50 . toList
 
 instance Applicative Univ where
     pure = Univ . return
@@ -58,7 +63,7 @@ univUncons :: Univ a -> Maybe (a, Univ a)
 univUncons (Univ [])     = Nothing
 univUncons (Univ (x:xs)) = Just (x, Univ xs)
 
--- | Create 'Univ' from potentiall infinite list
+-- | Create 'Univ' from potentially infinite list.
 univFromList :: [a] -> Univ a
 univFromList = Univ
 

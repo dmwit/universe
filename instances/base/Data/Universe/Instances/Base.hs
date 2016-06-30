@@ -5,6 +5,7 @@ module Data.Universe.Instances.Base (
     Universe(..), Finite(..)
     ) where
 
+import Control.Applicative
 import Control.Monad
 import Data.Int
 import Data.Map ((!), fromList)
@@ -13,6 +14,7 @@ import Data.Ratio
 import Data.Universe.Class
 import Data.Universe.Helpers
 import Data.Word
+import Prelude
 
 instance Universe ()       where universeUniv = universeDef
 instance Universe Bool     where universeUniv = universeDef
@@ -44,7 +46,6 @@ instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Univers
     universeUniv = fmap mk $ universeUniv +*+ universeUniv +*+ universeUniv +*+ universeUniv +*+ universeUniv where
         mk ((((a,b),c),d),e) = (a,b,c,d,e)
 
--- | TODO: `diagonal` to `join`
 instance Universe a => Universe [a] where
     universeUniv = univCons [] ((:) <$> universeUniv <*> universeUniv)
 
