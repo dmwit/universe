@@ -8,9 +8,11 @@
  -- main module to avoid cluttering up the namespace).
 module Data.Universe.Helpers (
    -- * 'Univ' type
-   Univ(..),
+   Univ,
    emptyUniv,
    univCons,
+   univUncons,
+   univFromList,
    diagonal,
    (+++),
    (+*+),
@@ -51,6 +53,14 @@ emptyUniv = Univ []
 
 univCons :: a -> Univ a -> Univ a
 univCons x xs = pure x <> xs
+
+univUncons :: Univ a -> Maybe (a, Univ a)
+univUncons (Univ [])     = Nothing
+univUncons (Univ (x:xs)) = Just (x, Univ xs)
+
+-- | Create 'Univ' from potentiall infinite list
+univFromList :: [a] -> Univ a
+univFromList = Univ
 
 -- | Appending is fair interleaving, associativity rule holds if one consider equality on `Univ` as sets.
 instance Semigroup (Univ a) where

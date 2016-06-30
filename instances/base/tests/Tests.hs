@@ -1,7 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main (main) where
 
-import Data.List (elemIndex, nub)
+import Data.List (elemIndex)
 import Data.Int (Int8)
 import Test.QuickCheck
 import Data.Universe.Class

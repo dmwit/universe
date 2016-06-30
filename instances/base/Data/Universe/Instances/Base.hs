@@ -18,7 +18,7 @@ instance Universe ()       where universeUniv = universeDef
 instance Universe Bool     where universeUniv = universeDef
 instance Universe Char     where universeUniv = universeDef
 instance Universe Ordering where universeUniv = universeDef
-instance Universe Integer  where universeUniv = Univ [0, -1..] +++ Univ [1..]
+instance Universe Integer  where universeUniv = univFromList [0, -1..] +++ univFromList [1..]
 instance Universe Int      where universeUniv = universeDef
 instance Universe Int8     where universeUniv = universeDef
 instance Universe Int16    where universeUniv = universeDef
@@ -44,8 +44,9 @@ instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Univers
     universeUniv = fmap mk $ universeUniv +*+ universeUniv +*+ universeUniv +*+ universeUniv +*+ universeUniv where
         mk ((((a,b),c),d),e) = (a,b,c,d,e)
 
+-- | TODO: `diagonal` to `join`
 instance Universe a => Universe [a] where
-    universeUniv = diagonal $ Univ [] : [Univ [h:t | t <- universe] | h <- universe]
+    universeUniv = univCons [] ((:) <$> universeUniv <*> universeUniv)
 
 instance Universe All where universeUniv = fmap All universeUniv
 instance Universe Any where universeUniv = fmap Any universeUniv
@@ -90,7 +91,7 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
     universeUniv = fmap tableToFunction tables where
         tables          = choices [universeUniv | _ <- monoUniverse]
         tableToFunction = (!) . fromList . zip monoUniverse
-        Univ monoUniverse    = universeUnivF
+        monoUniverse    = universeF
 
 instance Finite ()
 instance Finite Bool
@@ -127,6 +128,6 @@ instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
     universeUnivF = fmap tableToFunction tables where
         tables          = choices [universeUniv | _ <- monoUniverse]
         tableToFunction = (!) . fromList . zip monoUniverse
-        Univ monoUniverse = universeUnivF
+        monoUniverse    = universeF
 
 -- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)

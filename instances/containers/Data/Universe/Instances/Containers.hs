@@ -14,15 +14,19 @@ import qualified Data.Set as Set
 -- import qualified Data.Map as Map
 
 instance (Ord a, Universe a, Show a) => Universe (Set.Set a) where
-    universeUniv = univCons Set.empty $ Univ $ go universe
+    universeUniv = univCons Set.empty $ go universeUniv
       where
-        go []     = []
-        go (x:xs) = Set.singleton x : inter (go xs)
-          where
-            -- Probably more efficient than using (+++)
-            inter []     = []
-            inter (y:ys) = y : Set.insert x y : inter ys
-
+        go :: Ord b => Univ b -> Univ (Set.Set b)
+        go u = case univUncons u of
+            Nothing -> emptyUniv
+            Just (x, xs) -> univCons (Set.singleton x) $ inter (go xs)
+              where
+                -- Probably more efficient than using (+++)
+                -- TODO: add to Helpers
+                inter v = case univUncons v of
+                    Nothing     -> emptyUniv
+                    Just (y,ys) -> univCons y $ univCons (Set.insert x y) $
+                        inter ys
 
 instance (Ord a, Finite a, Show a) => Finite (Set.Set a)
 
