@@ -1,33 +1,33 @@
 module Data.Universe.Helpers (
-	-- | This module is for functions that are useful for writing instances,
-	-- but not necessarily for using them (and hence are not exported by the
-	-- main module to avoid cluttering up the namespace).
+    -- | This module is for functions that are useful for writing instances,
+    -- but not necessarily for using them (and hence are not exported by the
+    -- main module to avoid cluttering up the namespace).
 
-	-- * Building lists
-	universeDef,
-	interleave,
-	diagonal,
-	diagonals,
-	(+++),
-	(+*+),
-	choices,
+    -- * Building lists
+    universeDef,
+    interleave,
+    diagonal,
+    diagonals,
+    (+++),
+    (+*+),
+    choices,
 
-	-- * Building cardinalities
-	-- | These functions are handy for inheriting the definition of
-	-- 'Data.Universe.Class.cardinality' in a newtype instance. For example,
-	-- one might write
-	--
-	-- > newtype Foo = Foo Bar
-	-- > instance Finite Foo where cardinality = cardinality . unwrapProxy Foo
-	unwrapProxy,
-	unwrapProxy1of2,
-	unwrapProxy2of2,
+    -- * Building cardinalities
+    -- | These functions are handy for inheriting the definition of
+    -- 'Data.Universe.Class.cardinality' in a newtype instance. For example,
+    -- one might write
+    --
+    -- > newtype Foo = Foo Bar
+    -- > instance Finite Foo where cardinality = cardinality . unwrapProxy Foo
+    unwrapProxy,
+    unwrapProxy1of2,
+    unwrapProxy2of2,
 
-	-- * Debugging
-	-- | These functions exist primarily as a specification to test against.
-	unfairCartesianProduct,
-	unfairChoices
-	) where
+    -- * Debugging
+    -- | These functions exist primarily as a specification to test against.
+    unfairCartesianProduct,
+    unfairChoices
+    ) where
 
 import Data.List
 
@@ -61,12 +61,12 @@ diagonal = concat . diagonals
 -- list.
 diagonals :: [[a]] -> [[a]]
 diagonals = tail . go [] where
-	-- it is critical for some applications that we start producing answers
-	-- before inspecting es_
-	go b es_ = [h | h:_ <- b] : case es_ of
-		[]   -> transpose ts
-		e:es -> go (e:ts) es
-		where ts = [t | _:t <- b]
+    -- it is critical for some applications that we start producing answers
+    -- before inspecting es_
+    go b es_ = [h | h:_ <- b] : case es_ of
+        []   -> transpose ts
+        e:es -> go (e:ts) es
+        where ts = [t | _:t <- b]
 
 -- | Fair 2-way interleaving.
 (+++) :: [a] -> [a] -> [a]
@@ -110,8 +110,8 @@ unwrapProxy2of2 _ _ = []
 unfairCartesianProduct :: [a] -> [b] -> [(a,b)]
 unfairCartesianProduct _  [] = [] -- special case: don't want to walk down xs forever hoping one of them will produce a nonempty thing
 unfairCartesianProduct xs ys = go xs ys where
-	go (x:xs) ys = map ((,) x) ys +++ go xs ys
-	go []     ys = []
+    go (x:xs) ys = map ((,) x) ys +++ go xs ys
+    go []     ys = []
 
 -- | Very unfair n-way Cartesian product: same guarantee as the slightly unfair
 -- one, but not as good in the same sense that the very unfair 2-way product is
