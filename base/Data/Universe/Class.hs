@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
@@ -26,9 +27,9 @@ import Data.Universe.Helpers
 -- in 'length' pfx = 'length' (nub pfx)
 -- @
 class Universe a where
-    universe :: [a]
+    universe :: Stream a
 #ifdef DEFAULT_SIGNATURES
-    default universe :: (Enum a, Bounded a) => [a]
+    default universe :: (Enum a, Bounded a) => Stream a
     universe = universeDef
 #endif
 
@@ -56,8 +57,9 @@ class Universe a where
 -- Just 1
 -- @
 class Universe a => Finite a where
-    universeF :: [a]
+    universeF :: Stream a
     universeF = universe
 
+    -- TODO: change to Tagged, then the computation will be memoized!
     cardinality :: proxy a -> Integer
-    cardinality = genericLength . ((\_ -> universeF) :: Finite t => proxy t -> [t])
+    cardinality _ = streamLength (universeF :: Stream a)
