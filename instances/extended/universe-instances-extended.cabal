@@ -10,6 +10,16 @@ copyright:           Daniel Wagner 2014
 category:            Data
 build-type:          Simple
 cabal-version:       >=1.10
+tested-with:
+  GHC==7.0.4,
+  GHC==7.2.2,
+  GHC==7.4.2,
+  GHC==7.6.3,
+  GHC==7.8.4,
+  GHC==7.10.3,
+  GHC==8.0.2,
+  GHC==8.2.2
+
 source-repository head
     type:            git
     location:        https://github.com/dmwit/universe
@@ -20,7 +30,7 @@ source-repository this
 
 library
   exposed-modules:     Data.Universe.Instances.Extended
-  build-depends:       adjunctions             >=4   && <4.4,
+  build-depends:       adjunctions             >=4   && <4.5,
                        base                    >=4   && <5  ,
                        comonad                 >=4   && <5.1,
                        universe-instances-base >=1.0 && <1.2,
