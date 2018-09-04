@@ -1,6 +1,7 @@
 name:                universe-instances-trans
 version:             1.1
 synopsis:            Universe instances for types from the transformers and mtl packages
+description:
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -37,3 +38,5 @@ library
                        universe-instances-base >=1.0 && <1.2
   default-language:    Haskell2010
   other-extensions:    FlexibleContexts
+  if impl(ghc >= 7.10)
+    ghc-options:       -fno-warn-tabs

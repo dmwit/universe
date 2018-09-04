@@ -1,6 +1,7 @@
 name:                universe-instances-containers
 version:             1.0
 synopsis:            Universe instances for types from the containers package
+description:
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -35,6 +36,8 @@ library
                        containers >=0.4 && <0.6,
                        universe-base >=1.1 && <1.2
   default-language:    Haskell2010
+  if impl(ghc >= 7.10)
+    ghc-options:       -fno-warn-tabs
 
 test-suite tests
   default-language:    Haskell2010

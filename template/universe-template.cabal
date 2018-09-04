@@ -1,6 +1,7 @@
 name:                universe-template
 version:             1.1
 synopsis:            Template Haskell functions to derive Universe instances
+description:
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -32,6 +33,8 @@ library
   default-language:    Haskell2010
   other-extensions:    FlexibleContexts
   ghc-options:         -Wall
+  if impl(ghc >= 7.10)
+    ghc-options:       -fno-warn-tabs
 
 test-suite test
   type: exitcode-stdio-1.0

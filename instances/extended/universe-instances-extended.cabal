@@ -1,6 +1,7 @@
 name:                universe-instances-extended
 version:             1.1
 synopsis:            Universe instances for types from select extra packages
+description:
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -37,3 +38,5 @@ library
                        universe-base           >=1.1 && <1.2,
                        void                    >=0.1 && <0.8
   default-language:    Haskell2010
+  if impl(ghc >= 7.10)
+    ghc-options:       -fno-warn-tabs

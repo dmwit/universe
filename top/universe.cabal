@@ -39,3 +39,5 @@ library
                        universe-reverse-instances    >=1.1 && <1.2,
                        universe-instances-trans      >=1.1 && <1.2
   default-language:    Haskell2010
+  if impl(ghc >= 7.10)
+    ghc-options:       -fno-warn-tabs
