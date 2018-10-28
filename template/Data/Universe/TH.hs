@@ -13,6 +13,7 @@ module Data.Universe.TH (deriveSomeUniverse) where
 
 import Control.Monad
 import Data.Foldable
+import Data.Monoid
 import Data.Some
 import Data.Universe.Class
 import Language.Haskell.TH
