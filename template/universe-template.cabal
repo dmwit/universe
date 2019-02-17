@@ -27,7 +27,7 @@ library
   exposed-modules:     Data.Universe.TH
   build-depends:       base                    >=4   && <5  ,
                        dependent-sum           ==0.4.*      ,
-                       template-haskell        >=2.11 && <2.14,
+                       template-haskell        >=2.11 && <2.15,
                        th-extras               ==0.0.*      ,
                        universe-base           >=1.0 && <1.2,
                        universe-instances-base >=1.0 && <1.2

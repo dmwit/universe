@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE UndecidableInstances #-}
 module Data.Universe.Instances.Extended (
 	-- | Instances for 'Universe' and 'Finite' for function-like functors and the empty type.
 	Universe(..), Finite(..)

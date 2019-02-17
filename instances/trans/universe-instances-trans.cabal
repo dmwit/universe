@@ -1,7 +1,17 @@
 name:                universe-instances-trans
 version:             1.1
-synopsis:            Universe instances for types from the transformers and mtl packages
+synopsis:            Universe instances for types from the transformes and mtl packages
 description:
+  A class for finite and recursively enumerable types and some helper functions for enumerating them
+  defined in @universe-base@ package:
+  .
+  @
+  class Universe a where universe :: [a]
+  class Universe a => Finite a where universeF :: [a]; universeF = universe
+  @
+  .
+  This package provides instances for types in @transformers@ and @mtl@ packages.
+
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -13,13 +23,14 @@ build-type:          Simple
 cabal-version:       >=1.10
 tested-with:
   GHC==7.0.4,
-  GHC==7.2.2,
   GHC==7.4.2,
   GHC==7.6.3,
   GHC==7.8.4,
   GHC==7.10.3,
   GHC==8.0.2,
-  GHC==8.2.2
+  GHC==8.2.2,
+  GHC==8.4.4,
+  GHC==8.6.3
 
 source-repository head
     type:            git
@@ -35,7 +46,7 @@ library
                        mtl                     >=1.0 && <2.3,
                        transformers            >=0.2 && <0.6,
                        universe-base           >=1.1 && <1.2,
-                       universe-instances-base >=1.0 && <1.2
+                       universe-instances-base >=1.1 && <1.2
   default-language:    Haskell2010
   other-extensions:    FlexibleContexts
   if impl(ghc >= 7.10)

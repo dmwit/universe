@@ -2,6 +2,14 @@ name:                universe-instances-extended
 version:             1.1
 synopsis:            Universe instances for types from select extra packages
 description:
+  A class for finite and recursively enumerable types and some helper functions for enumerating them
+  defined in @universe-base@ package:
+  .
+  @
+  class Universe a where universe :: [a]
+  class Universe a => Finite a where universeF :: [a]; universeF = universe
+  @
+
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -13,13 +21,14 @@ build-type:          Simple
 cabal-version:       >=1.10
 tested-with:
   GHC==7.0.4,
-  GHC==7.2.2,
   GHC==7.4.2,
   GHC==7.6.3,
   GHC==7.8.4,
   GHC==7.10.3,
   GHC==8.0.2,
-  GHC==8.2.2
+  GHC==8.2.2,
+  GHC==8.4.4,
+  GHC==8.6.3
 
 source-repository head
     type:            git
@@ -34,7 +43,7 @@ library
   build-depends:       adjunctions             >=4   && <4.5,
                        base                    >=4   && <5  ,
                        comonad                 >=4   && <5.1,
-                       universe-instances-base >=1.0 && <1.2,
+                       universe-instances-base >=1.1 && <1.2,
                        universe-base           >=1.1 && <1.2,
                        void                    >=0.1 && <0.8
   default-language:    Haskell2010

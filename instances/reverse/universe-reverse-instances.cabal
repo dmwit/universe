@@ -2,6 +2,12 @@ name:                universe-reverse-instances
 version:             1.1
 synopsis:            instances of standard classes that are made possible by enumerations
 description:
+  For example this package provides a @Eq (a -> b)@ instance:
+  .
+  @
+  instance (Finite a, Eq b) => Eq (a -> b) where
+    f == g = and [f x == g x | x <- universeF]
+  @
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
@@ -13,13 +19,14 @@ build-type:          Simple
 cabal-version:       >=1.10
 tested-with:
   GHC==7.0.4,
-  GHC==7.2.2,
   GHC==7.4.2,
   GHC==7.6.3,
   GHC==7.8.4,
   GHC==7.10.3,
   GHC==8.0.2,
-  GHC==8.2.2
+  GHC==8.2.2,
+  GHC==8.4.4,
+  GHC==8.6.3
 
 source-repository head
     type:            git
@@ -36,8 +43,8 @@ library
                        Data.Universe.Instances.Show,
                        Data.Universe.Instances.Traversable
   build-depends:       base                    >=4   && <5  ,
-                       containers              >=0.4 && <0.6,
-                       universe-instances-base >=1.0 && <1.2
+                       containers              >=0.4 && <0.7,
+                       universe-instances-base >=1.1 && <1.2
   default-language:    Haskell2010
   if impl(ghc >= 7.10)
     ghc-options:       -fno-warn-tabs
