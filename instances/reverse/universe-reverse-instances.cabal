@@ -2,6 +2,12 @@ name:                universe-reverse-instances
 version:             1.1
 synopsis:            instances of standard classes that are made possible by enumerations
 description:
+  For example this package provides a @Eq (a -> b)@ instance:
+  .
+  @
+  instance (Finite a, Eq b) => Eq (a -> b) where
+    f == g = and [f x == g x | x <- universeF]
+  @
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE

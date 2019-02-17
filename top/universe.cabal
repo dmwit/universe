@@ -1,7 +1,16 @@
 name:                universe
 version:             1.1
-synopsis:            Classes for types where we know all the values
-description:         Munge finite and recursively enumerable types
+synopsis:            A class for finite and recursively enumerable types.
+description:
+  A class for finite and recursively enumerable types and some helper functions for enumerating them
+  .
+  @
+  class Universe a where universe :: [a]
+  class Universe a => Finite a where universeF :: [a]; universeF = universe
+  @
+  .
+  This also provides instances from @universe-instances-*" packages.
+
 homepage:            https://github.com/dmwit/universe
 license:             BSD3
 license-file:        LICENSE
