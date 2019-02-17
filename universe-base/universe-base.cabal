@@ -45,11 +45,13 @@ library
     CPP
     GADTs
     ScopedTypeVariables
+    TypeFamilies
+    BangPatterns
 
   build-depends:
       base          >=4.3     && <4.13
     , containers    >=0.4.0.0 && <0.7
-    , tagged        >=0.8.6   && <0.9
+    , tagged        >=0.8.4   && <0.9
     , transformers  >=0.3.0.0 && <0.6
 
   if !impl(ghc >=7.10)
@@ -74,5 +76,5 @@ test-suite tests
   build-depends:
       base
     , containers
-    , QuickCheck     >=2.11 && <2.14
+    , QuickCheck     >=2.8.2 && <2.14
     , universe-base
