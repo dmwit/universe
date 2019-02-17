@@ -1,5 +1,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE BangPatterns #-}
 module Data.Universe.Instances.Base (
 	-- | Instances of 'Universe' and 'Finite' for built-in types.
 	Universe(..), Finite(..)
@@ -10,6 +11,7 @@ import Data.Int
 import Data.Map ((!), fromList)
 import Data.Monoid
 import Data.Ratio
+import GHC.Real (Ratio (..))
 import Data.Universe.Class
 import Data.Universe.Helpers
 import Data.Word
@@ -59,24 +61,56 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 --     next x = let (n,y) = properFraction x in recip (fromInteger n + 1 - y)
 --     iterate' f x = let x' = f x in x' `seq` (x : iterate' f x')
 --
--- Compiling this code with -O2 and doing some informal tests seems to
--- show that positiveRationals and positiveRationals2 have almost exactly
--- the same efficiency for generating the entire list (e.g. the times for
--- finding the sum of the first 100000 rationals are pretty much
--- indistinguishable).  positiveRationals is still the clear winner for
--- generating just the nth rational for some particular n -- some simple
--- experiments seem to indicate that doing this with positiveRationals2
--- scales linearly while with positiveRationals it scales sub-linearly,
--- as expected.
+-- Compiling this code with -O2 and doing some informal tests seems to show
+-- that positiveRationals isn't terribly much more efficient than
+-- positiveRationals for generating the entire list (e.g. the times for finding
+-- the sum of the first 100000 rationals are similar).  positiveRationals is
+-- still the clear winner for generating just the nth rational for some
+-- particular n -- some simple experiments seem to indicate that doing this
+-- with positiveRationals2 scales linearly while with positiveRationals it
+-- scales sub-linearly, as expected.
 --
--- Surprisingly, replacing % with :% in positiveRationals seems to make
--- no appreciable difference.
+-- We used to use
+--
+--    positiveRationals =
+--      1 : map lChild positiveRationals +++ map rChild positiveRationals
+--
+-- where lChild and rChild produced the left and right child of each fraction,
+-- respectively. Aside from building unnecessary thunks (thanks to the lazy
+-- map), this had the problem of calculating each sum *twice*, once for a
+-- denominator and then a second time for the following numerator. That doesn't
+-- sound too bad, since in practice the integers will be small. But taking each
+-- sum allocates a constructor to wrap the result, and that's not
+-- free. We can avoid the problem with very little additional effort by
+-- interleaving manually. Negative rationals, unfortunately, don't get the
+-- benefit of sharing here.
 positiveRationals :: [Ratio Integer]
-positiveRationals = 1 : map lChild positiveRationals +++ map rChild positiveRationals where
-	lChild frac = numerator frac % (numerator frac + denominator frac)
-	rChild frac = (numerator frac + denominator frac) % denominator frac
+positiveRationals = 1 : go positiveRationals
+  where
+      go :: [Ratio Integer] -> [Ratio Integer]
+      go [] = []  -- Unreachable
+      go (x : xs) = lChild : rChild : go xs
+        where
+          !nd = numerator x + denominator x
+          !lChild = numerator x :% nd
+          !rChild = nd :% denominator x
 
-instance a ~ Integer => Universe (Ratio a) where universe = 0 : map negate positiveRationals +++ positiveRationals
+instance a ~ Integer => Universe (Ratio a) where
+    -- Why use a strict map? Mapping strictly is more expensive when ignoring
+    -- most of the result: it allocates four words (generally) for a negative
+    -- element rather than two words for a thunk that will evaluate to one. But
+    -- it's presumably more common to use the elements in a universe than to
+    -- leap over them, so we optimize for the former case.
+    universe = 0 : smap negate positiveRationals +++ positiveRationals
+
+-- A strict version of map
+smap :: (a -> b) -> [a] -> [b]
+smap f = go
+  where
+    go [] = []
+    go (x : xs) = let !fx = f x in fx : go xs
+{-# INLINE smap #-}
+
 
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?
