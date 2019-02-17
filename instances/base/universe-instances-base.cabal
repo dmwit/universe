@@ -19,7 +19,9 @@ tested-with:
   GHC==7.8.4,
   GHC==7.10.3,
   GHC==8.0.2,
-  GHC==8.2.2
+  GHC==8.2.2,
+  GHC==8.4.4,
+  GHC==8.6.3
 
 source-repository head
     type:            git
@@ -33,8 +35,8 @@ library
   exposed-modules:     Data.Universe.Instances.Base
   other-extensions:    TypeFamilies
   build-depends:       base >=4 && <5,
-                       containers >=0.4 && <0.6,
-                       universe-base >=1.0 && <1.2
+                       containers >=0.4 && <0.7,
+                       universe-base >=1.1 && <1.2
   default-language:    Haskell2010
   if impl(ghc >= 7.10)
     ghc-options:       -fno-warn-tabs
@@ -47,4 +49,4 @@ test-suite tests
   hs-source-dirs:      tests
   ghc-options:         -Wall
   build-depends:       base, containers, universe-base, universe-instances-base,
-                       QuickCheck >=2.11 && <2.12
+                       QuickCheck >=2.11 && <2.13
