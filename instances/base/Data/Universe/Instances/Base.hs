@@ -84,6 +84,8 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 -- free. We can avoid the problem with very little additional effort by
 -- interleaving manually. Negative rationals, unfortunately, don't get the
 -- benefit of sharing here.
+{-
+-- We don't use this at the moment, but we may want to export it.
 positiveRationals :: [Ratio Integer]
 positiveRationals = 1 : go positiveRationals
   where
@@ -94,23 +96,34 @@ positiveRationals = 1 : go positiveRationals
           !nd = numerator x + denominator x
           !lChild = numerator x :% nd
           !rChild = nd :% denominator x
+-}
+
+infixr 5 :<
+data Stream a = !a :< Stream a
+
+-- This is just like positiveRationals, but it's obviously infinite
+-- (which lets us avoid "unreachable" cases) and its elements are
+-- obviously in WHNF (which may or may not reduce code size slightly).
+positiveRationalStream :: Stream (Ratio Integer)
+positiveRationalStream = 1 :< go positiveRationalStream
+  where
+      go :: Stream (Ratio Integer) -> Stream (Ratio Integer)
+      go (x :< xs) = lChild :< rChild :< go xs
+        where
+          nd = numerator x + denominator x
+          lChild = numerator x :% nd
+          rChild = nd :% denominator x
 
 instance a ~ Integer => Universe (Ratio a) where
-    -- Why use a strict map? Mapping strictly is more expensive when ignoring
-    -- most of the result: it allocates four words (generally) for a negative
+    -- Why force the negations? This is more expensive if we ignore most of the result:
+    -- it allocates four words (generally) for a negative
     -- element rather than two words for a thunk that will evaluate to one. But
     -- it's presumably more common to use the elements in a universe than to
-    -- leap over them, so we optimize for the former case.
-    universe = 0 : smap negate positiveRationals +++ positiveRationals
-
--- A strict version of map
-smap :: (a -> b) -> [a] -> [b]
-smap f = go
-  where
-    go [] = []
-    go (x : xs) = let !fx = f x in fx : go xs
-{-# INLINE smap #-}
-
+    -- leap over them, so we optimize for the former case. We roll negation into
+    -- interleaving to avoid an intermediate list of negative numbers.
+    universe = 0 : negpos positiveRationalStream
+      where
+        negpos (x :< xs) = let !nx = -x in nx : x : negpos xs
 
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?
