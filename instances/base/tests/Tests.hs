@@ -38,7 +38,7 @@ rationalLaw :: Gen Property
 rationalLaw = do
   n <- choose (-19, 19)
   d <- choose (1, 19)
-  pure $ let nd = n % d in counterexample (show nd) (elem nd universe)
+  return $ let nd = n % d in counterexample (show nd) (elem nd universe)
 
 -------------------------------------------------------------------------------
 -- Finite laws
