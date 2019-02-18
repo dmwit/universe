@@ -1,4 +1,3 @@
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE BangPatterns #-}
 module Data.Universe.Instances.Base (
@@ -15,12 +14,14 @@ import GHC.Real (Ratio (..))
 import Data.Universe.Class
 import Data.Universe.Helpers
 import Data.Word
+import Numeric.Natural (Natural)
 
 instance Universe ()       where universe = universeDef
 instance Universe Bool     where universe = universeDef
 instance Universe Char     where universe = universeDef
 instance Universe Ordering where universe = universeDef
 instance Universe Integer  where universe = [0, -1..] +++ [1..]
+instance Universe Natural  where universe = [0..]
 instance Universe Int      where universe = universeDef
 instance Universe Int8     where universe = universeDef
 instance Universe Int16    where universe = universeDef
@@ -84,30 +85,42 @@ data Stream a = !a :< Stream a
 
 -- All the rational numbers on the left side of the Calkin-Wilf tree,
 -- in breadth-first order.
-leftSideStream :: Stream (Ratio Integer)
+leftSideStream :: Integral a => Stream (Ratio a)
 leftSideStream = 1 :% 2 :< go leftSideStream
   where
-      go :: Stream (Ratio Integer) -> Stream (Ratio Integer)
       go (x :< xs) = lChild :< rChild :< go xs
         where
           nd = numerator x + denominator x
           !lChild = numerator x :% nd
           !rChild = nd :% denominator x
 
-instance a ~ Integer => Universe (Ratio a) where
+instance RationalUniverse a => Universe (Ratio a) where
+  universe = rationalUniverse
+
+class RationalUniverse a where
+  rationalUniverse :: [Ratio a]
+
+instance RationalUniverse Integer where
     -- Why force the negations and reciprocals? This is more expensive if we
     -- ignore most of the result: it allocates four words (generally) for a
     -- negative element rather than two words for a thunk that will evaluate to
     -- one. But it's presumably more common to use the elements in a universe
     -- than to leap over them, so we optimize for the former case. We
     -- interleave manually to avoid allocating four intermediate lists.
-    universe = 0 : 1 : (-1) : go leftSideStream
+    rationalUniverse = 0 : 1 : (-1) : go leftSideStream
       where
         go (x@(xn :% xd) :< xs) =
           let !nx = -x
               !rx = xd :% xn
               !nrx = -rx
           in x : rx : nx : nrx : go xs
+
+instance RationalUniverse Natural where
+    rationalUniverse = 0 : 1 : go leftSideStream
+      where
+        go (x@(xn :% xd) :< xs) =
+          let !rx = xd :% xn
+          in x : rx : go xs
 
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?

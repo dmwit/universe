@@ -5,7 +5,8 @@ import Data.List (elemIndex, nub)
 import Data.Int (Int8)
 import Test.QuickCheck
 import Data.Universe.Instances.Base (Universe(..), Finite(..))
-import Data.Ratio ((%))
+import Data.Ratio (Ratio, (%))
+import Numeric.Natural
 
 import qualified Data.Set as Set
 
@@ -36,9 +37,16 @@ rationalLaw :: Gen Property
 -- We have to keep the numbers fairly small here to avoid needing to
 -- dig too deep.
 rationalLaw = do
-  n <- choose (-19, 19)
+  n <- choose (-19, 19 :: Integer)
   d <- choose (1, 19)
   return $ let nd = n % d in counterexample (show nd) (elem nd universe)
+
+natRatioLaw :: Gen Property
+natRatioLaw = do
+  n <- choose (0, 19 :: Int)
+  d <- choose (1, 19 :: Int)
+  return $ let nd = (fromIntegral n :: Natural) % fromIntegral d
+           in counterexample (show nd) (elem nd universe)
 
 -------------------------------------------------------------------------------
 -- Finite laws
@@ -74,7 +82,9 @@ main = do
     quickCheck eitherExample
     quickCheck $ universeLaws (P :: P Integer)
     quickCheck $ rationalLaw
+    quickCheck $ natRatioLaw
     quickCheck $ universeProdLaw (P :: P Rational)
+    quickCheck $ universeProdLaw (P :: P (Ratio Natural))
     quickCheck $ finiteLaws (P :: P Char)
     quickCheck $ finiteLaws (P :: P (Maybe Int8))
     quickCheck $ finiteLaws (P :: P (Either Int8 Int8))
