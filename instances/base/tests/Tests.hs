@@ -64,6 +64,7 @@ main = do
     -- i.e. it takes lots of time to get to small numbers!
     quickCheck eitherExample
     quickCheck $ universeLaws (P :: P Integer)
+    quickCheck $ universeLaws (P :: P Rational)
     quickCheck $ finiteLaws (P :: P Char)
     quickCheck $ finiteLaws (P :: P (Maybe Int8))
     quickCheck $ finiteLaws (P :: P (Either Int8 Int8))
