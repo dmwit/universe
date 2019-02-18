@@ -61,14 +61,7 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 --     next x = let (n,y) = properFraction x in recip (fromInteger n + 1 - y)
 --     iterate' f x = let x' = f x in x' `seq` (x : iterate' f x')
 --
--- Compiling this code with -O2 and doing some informal tests seems to show
--- that positiveRationals isn't terribly much more efficient than
--- positiveRationals for generating the entire list (e.g. the times for finding
--- the sum of the first 100000 rationals are similar).  positiveRationals is
--- still the clear winner for generating just the nth rational for some
--- particular n -- some simple experiments seem to indicate that doing this
--- with positiveRationals2 scales linearly while with positiveRationals it
--- scales sub-linearly, as expected.
+-- But this turns out to be substantially slower.
 --
 -- We used to use
 --
@@ -77,53 +70,44 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 --
 -- where lChild and rChild produced the left and right child of each fraction,
 -- respectively. Aside from building unnecessary thunks (thanks to the lazy
--- map), this had the problem of calculating each sum *twice*, once for a
--- denominator and then a second time for the following numerator. That doesn't
+-- map), this had the problem of calculating each sum at least four times,
+-- once for a denominator, a second time for the following numerator, and then two
+-- more times on the other side of the Calkin-Wilf tree. That doesn't
 -- sound too bad, since in practice the integers will be small. But taking each
 -- sum allocates a constructor to wrap the result, and that's not
 -- free. We can avoid the problem with very little additional effort by
 -- interleaving manually. Negative rationals, unfortunately, don't get the
--- benefit of sharing here.
-{-
--- We don't use this at the moment, but we may want to export it.
-positiveRationals :: [Ratio Integer]
-positiveRationals = 1 : go positiveRationals
-  where
-      go :: [Ratio Integer] -> [Ratio Integer]
-      go [] = []  -- Unreachable
-      go (x : xs) = lChild : rChild : go xs
-        where
-          !nd = numerator x + denominator x
-          !lChild = numerator x :% nd
-          !rChild = nd :% denominator x
--}
+-- full benefit of sharing here, but we can still share their denominators.
 
 infixr 5 :<
 data Stream a = !a :< Stream a
 
--- This is just like positiveRationals, but it's obviously infinite
--- (which lets us avoid "unreachable" cases) and its elements are
--- obviously in WHNF (which may or may not reduce code size slightly).
-positiveRationalStream :: Stream (Ratio Integer)
-positiveRationalStream = 1 :< go positiveRationalStream
+-- All the rational numbers on the left side of the Calkin-Wilf tree,
+-- in breadth-first order.
+leftSideStream :: Stream (Ratio Integer)
+leftSideStream = 1 :% 2 :< go leftSideStream
   where
       go :: Stream (Ratio Integer) -> Stream (Ratio Integer)
       go (x :< xs) = lChild :< rChild :< go xs
         where
           nd = numerator x + denominator x
-          lChild = numerator x :% nd
-          rChild = nd :% denominator x
+          !lChild = numerator x :% nd
+          !rChild = nd :% denominator x
 
 instance a ~ Integer => Universe (Ratio a) where
-    -- Why force the negations? This is more expensive if we ignore most of the result:
-    -- it allocates four words (generally) for a negative
-    -- element rather than two words for a thunk that will evaluate to one. But
-    -- it's presumably more common to use the elements in a universe than to
-    -- leap over them, so we optimize for the former case. We roll negation into
-    -- interleaving to avoid an intermediate list of negative numbers.
-    universe = 0 : negpos positiveRationalStream
+    -- Why force the negations and reciprocals? This is more expensive if we
+    -- ignore most of the result: it allocates four words (generally) for a
+    -- negative element rather than two words for a thunk that will evaluate to
+    -- one. But it's presumably more common to use the elements in a universe
+    -- than to leap over them, so we optimize for the former case. We
+    -- interleave manually to avoid allocating four intermediate lists.
+    universe = 0 : 1 : (-1) : go leftSideStream
       where
-        negpos (x :< xs) = let !nx = -x in nx : x : negpos xs
+        go (x :< xs) =
+          let !nx = -x
+              !rx = recip x
+              !nrx = -rx
+          in x : rx : nx : nrx : go xs
 
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?
