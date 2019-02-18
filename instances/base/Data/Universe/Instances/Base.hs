@@ -70,7 +70,7 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 --
 -- where lChild and rChild produced the left and right child of each fraction,
 -- respectively. Aside from building unnecessary thunks (thanks to the lazy
--- map), this had the problem of calculating each sum at least four times,
+-- map), this had the problem of calculating each sum at least four times:
 -- once for a denominator, a second time for the following numerator, and then two
 -- more times on the other side of the Calkin-Wilf tree. That doesn't
 -- sound too bad, since in practice the integers will be small. But taking each
