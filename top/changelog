@@ -1,3 +1,7 @@
+???:
+* Rearranged the elements in `universe :: [Rational]` to reduce allocation
+  and increase speed.
+
 1.0:
 * split package into small pieces:
     * six packages, all dependencies of a top-level "universe" package
