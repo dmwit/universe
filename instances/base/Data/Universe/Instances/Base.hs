@@ -103,9 +103,9 @@ instance a ~ Integer => Universe (Ratio a) where
     -- interleave manually to avoid allocating four intermediate lists.
     universe = 0 : 1 : (-1) : go leftSideStream
       where
-        go (x :< xs) =
+        go (x@(xn :% xd) :< xs) =
           let !nx = -x
-              !rx = recip x
+              !rx = xd :% xn
               !nrx = -rx
           in x : rx : nx : nrx : go xs
 

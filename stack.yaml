@@ -1,4 +1,4 @@
-resolver: lts-6.3
+resolver: lts-13.7
 packages:
 - base/
 - instances/base/
