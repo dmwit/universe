@@ -14,11 +14,13 @@ import Data.Universe.Class
 import Data.Universe.Helpers
 import Data.Word
 
+instance Universe Integer  where
+    universe = streamIterate 0 succ +++ streamIterate (-1) pred
+
 instance Universe ()       where universe = universeDef
 instance Universe Bool     where universe = universeDef
 instance Universe Char     where universe = universeDef
 instance Universe Ordering where universe = universeDef
-instance Universe Integer  where universe = [0, -1..] +++ [1..]
 instance Universe Int      where universe = universeDef
 instance Universe Int8     where universe = universeDef
 instance Universe Int16    where universe = universeDef
@@ -30,24 +32,34 @@ instance Universe Word16   where universe = universeDef
 instance Universe Word32   where universe = universeDef
 instance Universe Word64   where universe = universeDef
 
-instance (Universe a, Universe b) => Universe (Either a b) where universe = map Left universe +++ map Right universe
-instance  Universe a              => Universe (Maybe  a  ) where universe = Nothing : map Just universe
+instance (Universe a, Universe b) => Universe (Either a b) where universe = fmap Left universe +++ fmap Right universe
+instance  Universe a              => Universe (Maybe  a  ) where universe = consStream Nothing $ fmap Just universe
 
-instance (Universe a, Universe b) => Universe (a, b) where universe = universe +*+ universe
-instance (Universe a, Universe b, Universe c) => Universe (a, b, c) where universe = [(a,b,c) | ((a,b),c) <- universe +*+ universe +*+ universe]
-instance (Universe a, Universe b, Universe c, Universe d) => Universe (a, b, c, d) where universe = [(a,b,c,d) | (((a,b),c),d) <- universe +*+ universe +*+ universe +*+ universe]
-instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Universe (a, b, c, d, e) where universe = [(a,b,c,d,e) | ((((a,b),c),d),e) <- universe +*+ universe +*+ universe +*+ universe +*+ universe]
+instance (Universe a, Universe b) => Universe (a, b) where 
+    universe = universe +*+ universe
+
+instance (Universe a, Universe b, Universe c) => Universe (a, b, c) where
+    universe = fmap reassoc (universe +*+ universe +*+ universe) where
+        reassoc ((a,b),c) = (a,b,c)
+        
+instance (Universe a, Universe b, Universe c, Universe d) => Universe (a, b, c, d) where
+    universe = fmap reassoc (universe +*+ universe) where
+        reassoc ((a,b),(c,d)) = (a,b,c,d)
+
+instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Universe (a, b, c, d, e) where
+    universe = fmap reassoc (universe +*+ universe) where
+        reassoc ((a,b,c),(d,e)) = (a,b,c,d,e)
 
 instance Universe a => Universe [a] where
-	universe = diagonal $ [[]] : [[h:t | t <- universe] | h <- universe]
+	 universe = error "not-implented" -- diagonal $ [[]] : [[h:t | t <- universe] | h <- universe]
 
-instance Universe All where universe = map All universe
-instance Universe Any where universe = map Any universe
-instance Universe a => Universe (Sum     a) where universe = map Sum     universe
-instance Universe a => Universe (Product a) where universe = map Product universe
-instance Universe a => Universe (Dual    a) where universe = map Dual    universe
-instance Universe a => Universe (First   a) where universe = map First   universe
-instance Universe a => Universe (Last    a) where universe = map Last    universe
+instance Universe All where universe = fmap All universe
+instance Universe Any where universe = fmap Any universe
+instance Universe a => Universe (Sum     a) where universe = fmap Sum     universe
+instance Universe a => Universe (Product a) where universe = fmap Product universe
+instance Universe a => Universe (Dual    a) where universe = fmap Dual    universe
+instance Universe a => Universe (First   a) where universe = fmap First   universe
+instance Universe a => Universe (Last    a) where universe = fmap Last    universe
 
 -- see http://mathlesstraveled.com/2008/01/07/recounting-the-rationals-part-ii-fractions-grow-on-trees/
 --
@@ -71,21 +83,22 @@ instance Universe a => Universe (Last    a) where universe = map Last    univers
 --
 -- Surprisingly, replacing % with :% in positiveRationals seems to make
 -- no appreciable difference.
-positiveRationals :: [Ratio Integer]
-positiveRationals = 1 : map lChild positiveRationals +++ map rChild positiveRationals where
+positiveRationals :: Stream (Ratio Integer)
+positiveRationals = consStream 1 $ fmap lChild positiveRationals +++ fmap rChild positiveRationals where
 	lChild frac = numerator frac % (numerator frac + denominator frac)
 	rChild frac = (numerator frac + denominator frac) % denominator frac
 
-instance a ~ Integer => Universe (Ratio a) where universe = 0 : map negate positiveRationals +++ positiveRationals
+instance a ~ Integer => Universe (Ratio a) where universe = consStream 0 $ fmap negate positiveRationals +++ positiveRationals
 
 -- could change the Ord constraint to an Eq one, but come on, how many finite
 -- types can't be ordered?
+{-
 instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
-	universe = map tableToFunction tables where
+	universe = fmap tableToFunction tables where
 		tables          = choices [universe | _ <- monoUniverse]
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
-
+-}
 instance Finite ()       where cardinality _ = 1
 instance Finite Bool     where cardinality _ = 2
 instance Finite Char     where cardinality _ = 1114112
@@ -103,9 +116,10 @@ instance Finite Word64   where cardinality _ = 2^64
 
 instance  Finite a            => Finite (Maybe  a  ) where cardinality _ = 1 + cardinality ([] :: [a])
 instance (Finite a, Finite b) => Finite (Either a b) where
-	universeF = map Left universe ++ map Right universe
+	universeF = fmap Left universe +++ fmap Right universe
 	cardinality _ = cardinality ([] :: [a]) + cardinality ([] :: [b])
 
+{-
 instance (Finite a, Finite b) => Finite (a, b) where
 	universeF = liftM2 (,) universeF universeF
 	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b])]
@@ -121,20 +135,22 @@ instance (Finite a, Finite b, Finite c, Finite d) => Finite (a, b, c, d) where
 instance (Finite a, Finite b, Finite c, Finite d, Finite e) => Finite (a, b, c, d, e) where
 	universeF = liftM5 (,,,,) universeF universeF universeF universeF universeF
 	cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c]), cardinality ([] :: [d]), cardinality ([] :: [e])]
+-}
 
-instance Finite All where universeF = map All universeF; cardinality _ = 2
-instance Finite Any where universeF = map Any universeF; cardinality _ = 2
-instance Finite a => Finite (Sum     a) where universeF = map Sum     universeF; cardinality = cardinality . unwrapProxy Sum
-instance Finite a => Finite (Product a) where universeF = map Product universeF; cardinality = cardinality . unwrapProxy Product
-instance Finite a => Finite (Dual    a) where universeF = map Dual    universeF; cardinality = cardinality . unwrapProxy Dual
-instance Finite a => Finite (First   a) where universeF = map First   universeF; cardinality = cardinality . unwrapProxy First
-instance Finite a => Finite (Last    a) where universeF = map Last    universeF; cardinality = cardinality . unwrapProxy Last
+instance Finite All where universeF = fmap All universeF; cardinality _ = 2
+instance Finite Any where universeF = fmap Any universeF; cardinality _ = 2
+instance Finite a => Finite (Sum     a) where universeF = fmap Sum     universeF; cardinality = cardinality . unwrapProxy Sum
+instance Finite a => Finite (Product a) where universeF = fmap Product universeF; cardinality = cardinality . unwrapProxy Product
+instance Finite a => Finite (Dual    a) where universeF = fmap Dual    universeF; cardinality = cardinality . unwrapProxy Dual
+instance Finite a => Finite (First   a) where universeF = fmap First   universeF; cardinality = cardinality . unwrapProxy First
+instance Finite a => Finite (Last    a) where universeF = fmap Last    universeF; cardinality = cardinality . unwrapProxy Last
 
+{-
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
-	universeF = map tableToFunction tables where
+	universeF = fmap tableToFunction tables where
 		tables          = sequence [universeF | _ <- monoUniverse]
 		tableToFunction = (!) . fromList . zip monoUniverse
 		monoUniverse    = universeF
 	cardinality _ = cardinality ([] :: [b]) ^ cardinality ([] :: [a])
-
+-}
 -- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)

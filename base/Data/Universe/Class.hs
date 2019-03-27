@@ -1,12 +1,13 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
 module Data.Universe.Class
-	( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
-	  Universe(..)
-	, Finite(..)
-	) where
+    ( -- | Bottoms are ignored for this entire module: only fully-defined inhabitants are considered inhabitants.
+      Universe(..)
+    , Finite(..)
+    ) where
 
 import Data.List (genericLength)
 import Data.Universe.Helpers
@@ -26,10 +27,10 @@ import Data.Universe.Helpers
 -- in 'length' pfx = 'length' (nub pfx)
 -- @
 class Universe a where
-	universe :: [a]
+    universe :: Stream a
 #ifdef DEFAULT_SIGNATURES
-	default universe :: (Enum a, Bounded a) => [a]
-	universe = universeDef
+    default universe :: (Enum a, Bounded a) => Stream a
+    universe = universeDef
 #endif
 
 -- | Creating an instance of this class is a declaration that your 'universe'
@@ -56,8 +57,9 @@ class Universe a where
 -- Just 1
 -- @
 class Universe a => Finite a where
-	universeF :: [a]
-	universeF = universe
+    universeF :: Stream a
+    universeF = universe
 
-	cardinality :: proxy a -> Integer
-	cardinality = genericLength . ((\_ -> universeF) :: Finite t => proxy t -> [t])
+    -- TODO: change to Tagged, then the computation will be memoized!
+    cardinality :: proxy a -> Integer
+    cardinality _ = streamLength (universeF :: Stream a)
