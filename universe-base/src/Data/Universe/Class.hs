@@ -12,6 +12,7 @@ module Data.Universe.Class
 
 import Data.Universe.Helpers
 
+import Control.Applicative (Const (..))
 import Control.Monad (liftM2, liftM3, liftM4, liftM5)
 import Control.Monad.Trans.Identity (IdentityT (..))
 import Control.Monad.Trans.Reader (ReaderT (..))
@@ -358,11 +359,15 @@ instance (Ord k, Finite k, Finite v) => Finite (Map.Map k v) where
 -- transformers
 -------------------------------------------------------------------------------
 
+instance  Universe  a => Universe (Const a b) where universe  = map Const universe
+instance  Finite    a => Finite   (Const a b) where universeF = map Const universeF; cardinality = retagWith Const cardinality
+
 instance  Universe    a                    => Universe (Identity    a) where universe  = map Identity  universe
 instance  Universe (f a)                   => Universe (IdentityT f a) where universe  = map IdentityT universe
 instance (Finite e, Ord e, Universe (m a)) => Universe (ReaderT e m a) where universe  = map ReaderT   universe
 instance  Universe (f (g a))               => Universe (Compose f g a) where universe  = map Compose   universe
 instance (Universe (f a), Universe (g a))  => Universe (Product f g a) where universe  = [Pair f g | (f, g) <- universe +*+ universe]
+
 instance  Finite       a                   => Finite   (Identity    a) where universeF = map Identity  universeF; cardinality = retagWith Identity  cardinality
 instance  Finite    (f a)                  => Finite   (IdentityT f a) where universeF = map IdentityT universeF; cardinality = retagWith IdentityT cardinality
 instance (Finite e, Ord e, Finite   (m a)) => Finite   (ReaderT e m a) where universeF = map ReaderT   universeF; cardinality = retagWith ReaderT   cardinality
