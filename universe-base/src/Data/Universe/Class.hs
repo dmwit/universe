@@ -20,6 +20,7 @@ import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product (..))
 import Data.Int (Int, Int8, Int16, Int32, Int64)
 import Data.List (genericLength)
+import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map ((!), fromList)
 import Data.Ratio (Ratio, numerator, denominator, (%))
 import GHC.Real (Ratio (..))
@@ -27,10 +28,12 @@ import Data.Void (Void)
 import Data.Word  (Word, Word8, Word16, Word32, Word64)
 import Numeric.Natural (Natural)
 import Data.Tagged (Tagged (..), retag)
+import Data.Proxy (Proxy (..))
 
 import qualified Data.Monoid as Mon
+import qualified Data.Semigroup as Semi
 import qualified Data.Set as Set
--- import qualified Data.Map as Map
+import qualified Data.Map as Map
 
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
@@ -115,6 +118,9 @@ instance (Universe a, Universe b, Universe c, Universe d, Universe e) => Univers
 instance Universe a => Universe [a] where
   universe = diagonal $ [[]] : [[h:t | t <- universe] | h <- universe]
 
+instance Universe a => Universe (NonEmpty a) where
+  universe = diagonal [[h :| t | t <- universe] | h <- universe]
+
 instance Universe Mon.All where universe = map Mon.All universe
 instance Universe Mon.Any where universe = map Mon.Any universe
 instance Universe a => Universe (Mon.Sum     a) where universe = map Mon.Sum     universe
@@ -122,6 +128,15 @@ instance Universe a => Universe (Mon.Product a) where universe = map Mon.Product
 instance Universe a => Universe (Mon.Dual    a) where universe = map Mon.Dual    universe
 instance Universe a => Universe (Mon.First   a) where universe = map Mon.First   universe
 instance Universe a => Universe (Mon.Last    a) where universe = map Mon.Last    universe
+
+-------------------------------------------------------------------------------
+-- Semi
+-------------------------------------------------------------------------------
+
+instance Universe a => Universe (Semi.Max   a) where universe = map Semi.Max   universe
+instance Universe a => Universe (Semi.Min   a) where universe = map Semi.Min   universe
+instance Universe a => Universe (Semi.First a) where universe = map Semi.First universe
+instance Universe a => Universe (Semi.Last  a) where universe = map Semi.Last  universe
 
 -------------------------------------------------------------------------------
 -- Rational
@@ -270,14 +285,19 @@ instance Finite a => Finite (Mon.Dual    a) where universeF = map Mon.Dual    un
 instance Finite a => Finite (Mon.First   a) where universeF = map Mon.First   universeF; cardinality = retagWith Mon.First   cardinality
 instance Finite a => Finite (Mon.Last    a) where universeF = map Mon.Last    universeF; cardinality = retagWith Mon.Last    cardinality
 
+instance Finite a => Finite (Semi.Max   a) where universeF = map Semi.Max   universeF; cardinality = retagWith Semi.Max   cardinality
+instance Finite a => Finite (Semi.Min   a) where universeF = map Semi.Min   universeF; cardinality = retagWith Semi.Min   cardinality
+instance Finite a => Finite (Semi.First a) where universeF = map Semi.First universeF; cardinality = retagWith Semi.First cardinality
+instance Finite a => Finite (Semi.Last  a) where universeF = map Semi.Last  universeF; cardinality = retagWith Semi.Last  cardinality
+
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
   universeF = map tableToFunction tables where
     tables          = sequence [universeF | _ <- monoUniverse]
     tableToFunction = (!) . fromList . zip monoUniverse
     monoUniverse    = universeF
   cardinality = liftM2 (^)
-      (retag (cardinality :: Tagged a Natural))
-      (retag (cardinality :: Tagged b Natural))
+    (retag (cardinality :: Tagged b Natural))
+    (retag (cardinality :: Tagged a Natural))
 
 -- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
 
@@ -286,12 +306,21 @@ instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
 -------------------------------------------------------------------------------
 
 instance Universe Void where universe = []
-instance Finite Void where cardinality = Tagged 0
+instance Finite Void where cardinality = 0
+
+-------------------------------------------------------------------------------
+-- tagged
+-------------------------------------------------------------------------------
+
+instance Universe (Proxy a) where universe = [Proxy]
+instance Finite (Proxy a) where cardinality = 1
+
+instance Universe a => Universe (Tagged b a) where universe = map Tagged universe
+instance Finite a => Finite (Tagged b a) where cardinality = retagWith Tagged cardinality
 
 -------------------------------------------------------------------------------
 -- containers
 -------------------------------------------------------------------------------
-
 
 instance (Ord a, Universe a) => Universe (Set.Set a) where
     universe = Set.empty : go universe
@@ -307,15 +336,27 @@ instance (Ord a, Universe a) => Universe (Set.Set a) where
 instance (Ord a, Finite a) => Finite (Set.Set a) where
     cardinality = retag (fmap (2 ^) (cardinality :: Tagged a Natural))
 
--- This is tricky
--- instance (Ord k, Universe k, Universe v) => Universe (Map.Map k v)
---     universe = ...
+instance (Ord k, Finite k, Universe v) => Universe (Map.Map k v) where
+  universe = map tableToFunction tables where
+    tables          = choices [universe | _ <- monoUniverse]
+    tableToFunction = fromList' . zip monoUniverse
+    monoUniverse    = universeF
+    fromList' xs = fromList [ (k,v) | (k, Just v) <- xs ]
+
+instance (Ord k, Finite k, Finite v) => Finite (Map.Map k v) where
+  universeF = map tableToFunction tables where
+    tables          = sequence [universeF | _ <- monoUniverse]
+    tableToFunction = fromList' . zip monoUniverse
+    monoUniverse    = universeF
+    fromList' xs = fromList [ (k,v) | (k, Just v) <- xs ]
+
+  cardinality = liftM2 (\b a -> (1 + b) ^ a)
+    (retag (cardinality :: Tagged v Natural))
+    (retag (cardinality :: Tagged k Natural))
 
 -------------------------------------------------------------------------------
 -- transformers
 -------------------------------------------------------------------------------
-
-
 
 instance  Universe    a                    => Universe (Identity    a) where universe  = map Identity  universe
 instance  Universe (f a)                   => Universe (IdentityT f a) where universe  = map IdentityT universe

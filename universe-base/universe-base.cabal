@@ -42,11 +42,11 @@ library
     Data.Universe.Helpers
 
   other-extensions:
+    BangPatterns
     CPP
     GADTs
     ScopedTypeVariables
     TypeFamilies
-    BangPatterns
 
   build-depends:
       base          >=4.3     && <4.13
@@ -78,3 +78,7 @@ test-suite tests
     , containers
     , QuickCheck     >=2.8.2 && <2.14
     , universe-base
+
+  if !impl(ghc >=7.10)
+    build-depends:
+        nats
