@@ -18,10 +18,11 @@ module Data.Universe.Helpers (
   -- one might write
   --
   -- > newtype Foo = Foo Bar
-  -- > instance Finite Foo where cardinality = cardinality . unwrapProxy Foo
-  unwrapProxy,
-  unwrapProxy1of2,
-  unwrapProxy2of2,
+  -- > instance Finite Foo where cardinality = retagWith Foo cardinality
+  retagWith,
+  retag,
+  Tagged (..),
+  Natural,
 
   -- * Debugging
   -- | These functions exist primarily as a specification to test against.
@@ -30,6 +31,8 @@ module Data.Universe.Helpers (
   ) where
 
 import Data.List
+import Data.Tagged (Tagged (..), retag)
+import Numeric.Natural (Natural)
 
 -- | For many types, the 'universe' should be @[minBound .. maxBound]@;
 -- 'universeDef' makes it easy to make such types an instance of 'Universe' via
@@ -88,21 +91,8 @@ xs +*+ ys = diagonal [[(x, y) | x <- xs] | y <- ys]
 choices :: [[a]] -> [[a]]
 choices = foldr ((map (uncurry (:)) .) . (+*+)) [[]]
 
--- | Convert a proxy for a newtype to a proxy for the contained type, given the
--- newtype's constructor.
-unwrapProxy     :: (a -> b)      -> proxy b -> [a]
-
--- | Convert a proxy for a pair-like type to a proxy for the first part of the
--- pair, given a pairing-like constructor.
-unwrapProxy1of2 :: (a -> b -> c) -> proxy c -> [a]
---
--- | Convert a proxy for a pair-like type to a proxy for the second part of the
--- pair, given a pairing-like constructor.
-unwrapProxy2of2 :: (a -> b -> c) -> proxy c -> [b]
-
-unwrapProxy     _ _ = []
-unwrapProxy1of2 _ _ = []
-unwrapProxy2of2 _ _ = []
+retagWith :: (a -> b) -> Tagged a x -> Tagged b x
+retagWith _ (Tagged n) = Tagged n
 
 -- | Very unfair 2-way Cartesian product: same guarantee as the slightly unfair
 -- one, except that lower indices may occur as the @fst@ part of the tuple

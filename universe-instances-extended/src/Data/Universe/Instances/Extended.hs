@@ -9,6 +9,7 @@ module Data.Universe.Instances.Extended (
 import Control.Comonad.Trans.Traced (TracedT (..))
 import Data.Functor.Rep (Representable (..), Co(..))
 import Data.Universe.Class (Universe (..), Finite (..))
+import Data.Universe.Helpers (retag, Tagged, Natural)
 
 -- | We could do this:
 --
@@ -30,7 +31,7 @@ instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Univers
 
 instance (Representable f, Finite (Rep f), Ord (Rep f), Finite a)
   => Finite (Co f a)
-  where universeF = map tabulate universeF; cardinality _ = cardinality ([] :: [Rep (Co        f) -> a])
+  where universeF = map tabulate universeF; cardinality = retag (cardinality :: Tagged (Rep (Co        f) -> a) Natural)
 instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Finite a)
   => Finite (TracedT s f a)
-  where universeF = map tabulate universeF; cardinality _ = cardinality ([] :: [Rep (TracedT s f) -> a])
+  where universeF = map tabulate universeF; cardinality = retag (cardinality :: Tagged (Rep (TracedT s f)) Natural)

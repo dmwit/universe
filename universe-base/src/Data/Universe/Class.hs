@@ -24,6 +24,8 @@ import Data.Map ((!), fromList)
 import Data.Ratio (Ratio, numerator, denominator, (%))
 import Data.Void (Void)
 import Data.Word  (Word, Word8, Word16, Word32, Word64)
+import Numeric.Natural (Natural)
+import Data.Tagged (Tagged (..), retag)
 
 import qualified Data.Monoid as Mon
 import qualified Data.Set as Set
@@ -77,8 +79,8 @@ class Universe a => Finite a where
   universeF :: [a]
   universeF = universe
 
-  cardinality :: proxy a -> Integer
-  cardinality = genericLength . ((\_ -> universeF) :: Finite t => proxy t -> [t])
+  cardinality :: Tagged a Natural
+  cardinality = Tagged (genericLength (universeF :: [a]))
 
 -------------------------------------------------------------------------------
 -- Base
@@ -156,56 +158,75 @@ instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
     tableToFunction = (!) . fromList . zip monoUniverse
     monoUniverse    = universeF
 
-instance Finite ()       where cardinality _ = 1
-instance Finite Bool     where cardinality _ = 2
-instance Finite Char     where cardinality _ = 1114112
-instance Finite Ordering where cardinality _ = 3
-instance Finite Int      where cardinality _ = fromIntegral (maxBound :: Int) - fromIntegral (minBound :: Int) + 1
-instance Finite Int8     where cardinality _ = 2^8
-instance Finite Int16    where cardinality _ = 2^16
-instance Finite Int32    where cardinality _ = 2^32
-instance Finite Int64    where cardinality _ = 2^64
-instance Finite Word     where cardinality _ = fromIntegral (maxBound :: Word) - fromIntegral (minBound :: Word) + 1
-instance Finite Word8    where cardinality _ = 2^8
-instance Finite Word16   where cardinality _ = 2^16
-instance Finite Word32   where cardinality _ = 2^32
-instance Finite Word64   where cardinality _ = 2^64
+instance Finite ()       where cardinality = 1
+instance Finite Bool     where cardinality = 2
+instance Finite Char     where cardinality = 1114112
+instance Finite Ordering where cardinality = 3
+instance Finite Int      where cardinality = fromIntegral (maxBound :: Int) - fromIntegral (minBound :: Int) + 1
+instance Finite Int8     where cardinality = 2^8
+instance Finite Int16    where cardinality = 2^16
+instance Finite Int32    where cardinality = 2^32
+instance Finite Int64    where cardinality = 2^64
+instance Finite Word     where cardinality = fromIntegral (maxBound :: Word) - fromIntegral (minBound :: Word) + 1
+instance Finite Word8    where cardinality = Tagged $ 2^8
+instance Finite Word16   where cardinality = Tagged $ 2^16
+instance Finite Word32   where cardinality = Tagged $ 2^32
+instance Finite Word64   where cardinality = Tagged $ 2^64
 
-instance  Finite a            => Finite (Maybe  a  ) where cardinality _ = 1 + cardinality ([] :: [a])
+instance  Finite a            => Finite (Maybe  a  ) where
+    cardinality = fmap succ (retag (cardinality :: Tagged a Natural))
 instance (Finite a, Finite b) => Finite (Either a b) where
   universeF = map Left universe ++ map Right universe
-  cardinality _ = cardinality ([] :: [a]) + cardinality ([] :: [b])
+  cardinality = liftM2 (\a b -> a + b)
+    (retag (cardinality :: Tagged a Natural))
+    (retag (cardinality :: Tagged b Natural))
 
 instance (Finite a, Finite b) => Finite (a, b) where
   universeF = liftM2 (,) universeF universeF
-  cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b])]
+  cardinality = liftM2 (\a b -> a * b)
+    (retag (cardinality :: Tagged a Natural))
+    (retag (cardinality :: Tagged b Natural))
 
 instance (Finite a, Finite b, Finite c) => Finite (a, b, c) where
   universeF = liftM3 (,,) universeF universeF universeF
-  cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c])]
+  cardinality = liftM3 (\a b c -> a * b * c)
+    (retag (cardinality :: Tagged a Natural))
+    (retag (cardinality :: Tagged b Natural))
+    (retag (cardinality :: Tagged c Natural))
 
 instance (Finite a, Finite b, Finite c, Finite d) => Finite (a, b, c, d) where
   universeF = liftM4 (,,,) universeF universeF universeF universeF
-  cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c]), cardinality ([] :: [d])]
+  cardinality = liftM4 (\a b c d -> a * b * c * d)
+    (retag (cardinality :: Tagged a Natural))
+    (retag (cardinality :: Tagged b Natural))
+    (retag (cardinality :: Tagged c Natural))
+    (retag (cardinality :: Tagged d Natural))
 
 instance (Finite a, Finite b, Finite c, Finite d, Finite e) => Finite (a, b, c, d, e) where
   universeF = liftM5 (,,,,) universeF universeF universeF universeF universeF
-  cardinality _ = product [cardinality ([] :: [a]), cardinality ([] :: [b]), cardinality ([] :: [c]), cardinality ([] :: [d]), cardinality ([] :: [e])]
+  cardinality = liftM5 (\a b c d e -> a * b * c * d * e)
+    (retag (cardinality :: Tagged a Natural))
+    (retag (cardinality :: Tagged b Natural))
+    (retag (cardinality :: Tagged c Natural))
+    (retag (cardinality :: Tagged d Natural))
+    (retag (cardinality :: Tagged e Natural))
 
-instance Finite Mon.All where universeF = map Mon.All universeF; cardinality _ = 2
-instance Finite Mon.Any where universeF = map Mon.Any universeF; cardinality _ = 2
-instance Finite a => Finite (Mon.Sum     a) where universeF = map Mon.Sum     universeF; cardinality = cardinality . unwrapProxy Mon.Sum
-instance Finite a => Finite (Mon.Product a) where universeF = map Mon.Product universeF; cardinality = cardinality . unwrapProxy Mon.Product
-instance Finite a => Finite (Mon.Dual    a) where universeF = map Mon.Dual    universeF; cardinality = cardinality . unwrapProxy Mon.Dual
-instance Finite a => Finite (Mon.First   a) where universeF = map Mon.First   universeF; cardinality = cardinality . unwrapProxy Mon.First
-instance Finite a => Finite (Mon.Last    a) where universeF = map Mon.Last    universeF; cardinality = cardinality . unwrapProxy Mon.Last
+instance Finite Mon.All where universeF = map Mon.All universeF; cardinality = 2
+instance Finite Mon.Any where universeF = map Mon.Any universeF; cardinality = 2
+instance Finite a => Finite (Mon.Sum     a) where universeF = map Mon.Sum     universeF; cardinality = retagWith Mon.Sum     cardinality 
+instance Finite a => Finite (Mon.Product a) where universeF = map Mon.Product universeF; cardinality = retagWith Mon.Product cardinality
+instance Finite a => Finite (Mon.Dual    a) where universeF = map Mon.Dual    universeF; cardinality = retagWith Mon.Dual    cardinality
+instance Finite a => Finite (Mon.First   a) where universeF = map Mon.First   universeF; cardinality = retagWith Mon.First   cardinality
+instance Finite a => Finite (Mon.Last    a) where universeF = map Mon.Last    universeF; cardinality = retagWith Mon.Last    cardinality
 
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
   universeF = map tableToFunction tables where
     tables          = sequence [universeF | _ <- monoUniverse]
     tableToFunction = (!) . fromList . zip monoUniverse
     monoUniverse    = universeF
-  cardinality _ = cardinality ([] :: [b]) ^ cardinality ([] :: [a])
+  cardinality = liftM2 (^)
+      (retag (cardinality :: Tagged a Natural))
+      (retag (cardinality :: Tagged b Natural))
 
 -- to add when somebody asks for it: instance (Eq a, Finite a) => Finite (Endo a) (+Universe)
 
@@ -214,7 +235,7 @@ instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
 -------------------------------------------------------------------------------
 
 instance Universe Void where universe = []
-instance Finite Void where cardinality _ = 0
+instance Finite Void where cardinality = Tagged 0
 
 -------------------------------------------------------------------------------
 -- containers
@@ -233,7 +254,7 @@ instance (Ord a, Universe a) => Universe (Set.Set a) where
 
 
 instance (Ord a, Finite a) => Finite (Set.Set a) where
-    cardinality p = 2 ^ cardinality (unwrapProxy Set.singleton p)
+    cardinality = retag (fmap (2 ^) (cardinality :: Tagged a Natural))
 
 -- This is tricky
 -- instance (Ord k, Universe k, Universe v) => Universe (Map.Map k v)
@@ -250,10 +271,12 @@ instance  Universe (f a)                   => Universe (IdentityT f a) where uni
 instance (Finite e, Ord e, Universe (m a)) => Universe (ReaderT e m a) where universe  = map ReaderT   universe
 instance  Universe (f (g a))               => Universe (Compose f g a) where universe  = map Compose   universe
 instance (Universe (f a), Universe (g a))  => Universe (Product f g a) where universe  = [Pair f g | (f, g) <- universe +*+ universe]
-instance  Finite       a                   => Finite   (Identity    a) where universeF = map Identity  universeF; cardinality = cardinality . unwrapProxy Identity
-instance  Finite    (f a)                  => Finite   (IdentityT f a) where universeF = map IdentityT universeF; cardinality = cardinality . unwrapProxy IdentityT
-instance (Finite e, Ord e, Finite   (m a)) => Finite   (ReaderT e m a) where universeF = map ReaderT   universeF; cardinality = cardinality . unwrapProxy ReaderT
-instance  Finite (f (g a))                 => Finite   (Compose f g a) where universeF = map Compose   universeF; cardinality = cardinality . unwrapProxy Compose
+instance  Finite       a                   => Finite   (Identity    a) where universeF = map Identity  universeF; cardinality = retagWith Identity  cardinality
+instance  Finite    (f a)                  => Finite   (IdentityT f a) where universeF = map IdentityT universeF; cardinality = retagWith IdentityT cardinality
+instance (Finite e, Ord e, Finite   (m a)) => Finite   (ReaderT e m a) where universeF = map ReaderT   universeF; cardinality = retagWith ReaderT   cardinality
+instance  Finite (f (g a))                 => Finite   (Compose f g a) where universeF = map Compose   universeF; cardinality = retagWith Compose   cardinality
 instance (Finite (f a), Finite (g a))      => Finite   (Product f g a) where
   universeF = liftM2 Pair universeF universeF
-  cardinality proxy = cardinality (unwrapProxy1of2 Pair proxy) * cardinality (unwrapProxy2of2 Pair proxy)
+  cardinality = liftM2 (*)
+    (retag (cardinality :: Tagged (f a) Natural))
+    (retag (cardinality :: Tagged (g a) Natural))
