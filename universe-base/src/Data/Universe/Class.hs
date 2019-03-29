@@ -36,6 +36,9 @@ import qualified Data.Semigroup as Semi
 import qualified Data.Set as Set
 import qualified Data.Map as Map
 
+-- $setup
+-- >>> import Data.List
+
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
 -- particular, you promise that any finite inhabitant has a finite index in
@@ -74,12 +77,12 @@ class Universe a where
 -- may not hold for all types, though the laws imply that `universe`
 -- is a permutation of `universeF`.
 --
--- @
 -- >>> elemIndex (Left True :: Either Bool Bool) universe
 -- Just 2
+--
 -- >>> elemIndex (Left True :: Either Bool Bool) universeF
 -- Just 1
--- @
+--
 class Universe a => Finite a where
   universeF :: [a]
   universeF = universe

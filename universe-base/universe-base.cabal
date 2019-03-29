@@ -41,6 +41,13 @@ library
     Data.Universe.Class
     Data.Universe.Helpers
 
+  if impl(ghc >= 7.2)
+    exposed-modules:
+      Data.Universe.Generic
+    if impl(ghc <7.6)
+      build-depends:
+        ghc-prim
+
   other-extensions:
     BangPatterns
     CPP
