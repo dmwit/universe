@@ -3,7 +3,7 @@ packages:
 - universe-base/
 - universe/
 - universe-instances-extended/
-- universe-instances-reverse/
+- universe-reverse-instances/
 - deprecated/universe-instances-base/
 - deprecated/universe-instances-trans/
 extra-deps: []

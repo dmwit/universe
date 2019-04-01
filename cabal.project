@@ -1,7 +1,7 @@
 packages:
   universe-base/
   universe-instances-extended/
-  universe-instances-reverse/
+  universe-reverse-instances/
   universe/
 
 packages:

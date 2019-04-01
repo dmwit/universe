@@ -107,7 +107,7 @@ install:
   - |
     echo 'packages: "universe-base"' >> cabal.project
     echo 'packages: "universe-instances-extended"' >> cabal.project
-    echo 'packages: "universe-instances-reverse"' >> cabal.project
+    echo 'packages: "universe-reverse-instances"' >> cabal.project
     echo 'packages: "universe"' >> cabal.project
     echo 'packages: "deprecated/universe-instances-base"' >> cabal.project
     echo 'packages: "deprecated/universe-instances-trans"' >> cabal.project
@@ -118,7 +118,7 @@ install:
   - cat cabal.project.local || true
   - if [ -f "universe-base/configure.ac" ]; then (cd "universe-base" && autoreconf -i); fi
   - if [ -f "universe-instances-extended/configure.ac" ]; then (cd "universe-instances-extended" && autoreconf -i); fi
-  - if [ -f "universe-instances-reverse/configure.ac" ]; then (cd "universe-instances-reverse" && autoreconf -i); fi
+  - if [ -f "universe-reverse-instances/configure.ac" ]; then (cd "universe-reverse-instances" && autoreconf -i); fi
   - if [ -f "universe/configure.ac" ]; then (cd "universe" && autoreconf -i); fi
   - if [ -f "deprecated/universe-instances-base/configure.ac" ]; then (cd "deprecated/universe-instances-base" && autoreconf -i); fi
   - if [ -f "deprecated/universe-instances-trans/configure.ac" ]; then (cd "deprecated/universe-instances-trans" && autoreconf -i); fi
