@@ -36,7 +36,7 @@ instance GUniverseProduct U1 where
 
 -- This is not completely fair; but enough.
 instance (GUniverseProduct f, GUniverseProduct g) => GUniverseProduct (f :*: g) where
-  guniverseProduct = diagonal [[ (x :*: y) | x <- guniverseProduct ] | y <- guniverseProduct ]
+  guniverseProduct = cartesianProduct (:*:) guniverseProduct guniverseProduct
 
 instance GUniverseProduct f => GUniverseProduct (M1 i c f) where
   guniverseProduct = map M1 guniverseProduct

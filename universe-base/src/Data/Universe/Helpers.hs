@@ -9,7 +9,9 @@ module Data.Universe.Helpers (
   diagonal,
   diagonals,
   (+++),
+  cartesianProduct,
   (+*+),
+  (<+*+>),
   choices,
 
   -- * Building cardinalities
@@ -80,9 +82,25 @@ xs +++ ys = interleave [xs,ys]
 -- indices in the input lists, @(v,w)@ has finite index in the output list.
 -- Lower indices occur as the @fst@ part of the tuple more frequently, but not
 -- exponentially so.
+cartesianProduct :: (a -> b -> c) -> [a] -> [b] -> [c]
+-- special case: don't want to construct an infinite list of empty lists to pass to diagonal
+cartesianProduct _ []   _  = []
+cartesianProduct _ _   []  = []
+-- singleton lists:
+cartesianProduct f [x] ys  = fmap (f x) ys
+cartesianProduct f xs  [y] = fmap (`f` y) xs
+-- general case:
+cartesianProduct f xs  ys  = diagonal [[f x y | x <- xs] | y <- ys]
+
+-- | @'cartesianProduct' (,)@
 (+*+) :: [a] -> [b] -> [(a,b)]
-[] +*+ _  = [] -- special case: don't want to construct an infinite list of empty lists to pass to diagonal
-xs +*+ ys = diagonal [[(x, y) | x <- xs] | y <- ys]
+(+*+) = cartesianProduct (,)
+
+-- | A '+*+' with application.
+--
+-- @'cartesianProduct' ($)@
+(<+*+>) :: [a -> b] -> [a] -> [b]
+(<+*+>) = cartesianProduct ($)
 
 -- | Slightly unfair n-way Cartesian product: given a finite number of
 -- (possibly infinite) lists, produce a single list such that whenever @vi@ has
@@ -97,14 +115,14 @@ retagWith _ (Tagged n) = Tagged n
 -- | Very unfair 2-way Cartesian product: same guarantee as the slightly unfair
 -- one, except that lower indices may occur as the @fst@ part of the tuple
 -- exponentially more frequently.
-unfairCartesianProduct :: [a] -> [b] -> [(a,b)]
-unfairCartesianProduct _  [] = [] -- special case: don't want to walk down xs forever hoping one of them will produce a nonempty thing
-unfairCartesianProduct xs ys = go xs ys where
-  go (x:xs) ys = map ((,) x) ys +++ go xs ys
+unfairCartesianProduct :: (a -> b -> c) -> [a] -> [b] -> [c]
+unfairCartesianProduct _ _  [] = [] -- special case: don't want to walk down xs forever hoping one of them will produce a nonempty thing
+unfairCartesianProduct f xs ys = go xs ys where
+  go (x:xs) ys = map (f x) ys +++ go xs ys
   go []     ys = []
 
 -- | Very unfair n-way Cartesian product: same guarantee as the slightly unfair
 -- one, but not as good in the same sense that the very unfair 2-way product is
 -- worse than the slightly unfair 2-way product.
 unfairChoices :: [[a]] -> [[a]]
-unfairChoices = foldr ((map (uncurry (:)) .) . unfairCartesianProduct) [[]]
+unfairChoices = foldr ((map (uncurry (:)) .) . unfairCartesianProduct (,)) [[]]
