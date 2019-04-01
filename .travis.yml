@@ -108,17 +108,19 @@ install:
     echo 'packages: "universe-base"' >> cabal.project
     echo 'packages: "universe-instances-extended"' >> cabal.project
     echo 'packages: "universe-reverse-instances"' >> cabal.project
+    echo 'packages: "universe-dependent-sum"' >> cabal.project
     echo 'packages: "universe"' >> cabal.project
     echo 'packages: "deprecated/universe-instances-base"' >> cabal.project
     echo 'packages: "deprecated/universe-instances-trans"' >> cabal.project
   - |
     echo "write-ghc-environment-files: always" >> cabal.project
-  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | grep -vE -- '^(universe|universe-base|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
+  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
   - if [ -f "universe-base/configure.ac" ]; then (cd "universe-base" && autoreconf -i); fi
   - if [ -f "universe-instances-extended/configure.ac" ]; then (cd "universe-instances-extended" && autoreconf -i); fi
   - if [ -f "universe-reverse-instances/configure.ac" ]; then (cd "universe-reverse-instances" && autoreconf -i); fi
+  - if [ -f "universe-dependent-sum/configure.ac" ]; then (cd "universe-dependent-sum" && autoreconf -i); fi
   - if [ -f "universe/configure.ac" ]; then (cd "universe" && autoreconf -i); fi
   - if [ -f "deprecated/universe-instances-base/configure.ac" ]; then (cd "deprecated/universe-instances-base" && autoreconf -i); fi
   - if [ -f "deprecated/universe-instances-trans/configure.ac" ]; then (cd "deprecated/universe-instances-trans" && autoreconf -i); fi
@@ -142,12 +144,13 @@ script:
     echo 'packages: "universe-base-*/*.cabal"' >> cabal.project
     echo 'packages: "universe-instances-extended-*/*.cabal"' >> cabal.project
     echo 'packages: "universe-reverse-instances-*/*.cabal"' >> cabal.project
+    echo 'packages: "universe-dependent-sum-*/*.cabal"' >> cabal.project
     echo 'packages: "universe-*/*.cabal"' >> cabal.project
     echo 'packages: "universe-instances-base-*/*.cabal"' >> cabal.project
     echo 'packages: "universe-instances-trans-*/*.cabal"' >> cabal.project
   - |
     echo "write-ghc-environment-files: always" >> cabal.project
-  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | grep -vE -- '^(universe|universe-base|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
+  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
   # Building...
@@ -162,6 +165,7 @@ script:
   - (cd universe-base-* && ${CABAL} -vnormal check)
   - (cd universe-instances-extended-* && ${CABAL} -vnormal check)
   - (cd universe-reverse-instances-* && ${CABAL} -vnormal check)
+  - (cd universe-dependent-sum-* && ${CABAL} -vnormal check)
   - (cd universe-* && ${CABAL} -vnormal check)
   - (cd universe-instances-base-* && ${CABAL} -vnormal check)
   - (cd universe-instances-trans-* && ${CABAL} -vnormal check)

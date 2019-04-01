@@ -13,6 +13,7 @@ module Data.Universe (
 
 import Data.Universe.Class
 import Data.Universe.Instances.Extended
+import Data.Universe.Some ()
 
 #if __GLASGOW_HASKELL__ >= 702
 import Data.Universe.Generic (universeGeneric)

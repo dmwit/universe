@@ -1,9 +1,10 @@
 resolver: lts-6.35
 packages:
 - universe-base/
-- universe/
+- universe-dependent-sum/
 - universe-instances-extended/
 - universe-reverse-instances/
+- universe/
 - deprecated/universe-instances-base/
 - deprecated/universe-instances-trans/
 extra-deps: []

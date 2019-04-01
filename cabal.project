@@ -2,6 +2,7 @@ packages:
   universe-base/
   universe-instances-extended/
   universe-reverse-instances/
+  universe-dependent-sum/
   universe/
 
 packages:

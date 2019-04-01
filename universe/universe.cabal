@@ -44,3 +44,4 @@ library
       universe-base                >=1.1 && <1.1.1
     , universe-instances-extended  >=1.1 && <1.1.1
     , universe-reverse-instances   >=1.1 && <1.1.1
+    , universe-dependent-sum       >=1.1 && <1.1.1
