@@ -1,0 +1,56 @@
+name:          universe-dependent-sum-th
+version:       1.1
+synopsis:
+  Template Haskell derivation of universe-dependent-sum classes
+
+description:
+  Derivation of UniverseSome and UniverseFiniti classes with
+  Template Haskell. 
+  .
+  /Note:/ this package doesn't use Template Haskell itself.
+
+homepage:      https://github.com/dmwit/universe
+license:       BSD3
+license-file:  LICENSE
+author:        Daniel Wagner
+maintainer:    me@dmwit.com
+copyright:     Daniel Wagner 2014
+category:      Data
+build-type:    Simple
+cabal-version: >=1.10
+tested-with:
+  GHC ==8.6.4 || ==8.4.4 || ==8.2.2 || ==8.0.2 || ==7.10.3 || ==7.8.4 || ==7.6.3 || ==7.4.2 || ==7.0.4
+
+source-repository head
+  type:     git
+  location: https://github.com/dmwit/universe
+
+source-repository this
+  type:     git
+  location: https://github.com/dmwit/universe
+  tag:      instances-dependent-sum-1.1
+
+library
+  default-language: Haskell2010
+  hs-source-dirs:   src
+  exposed-modules:  Data.Universe.Some.TH
+  build-depends:
+      base                    >=4.3      && <4.13
+    , dependent-sum           >=0.4      && <0.5
+    , template-haskell        >=2.5      && <2.15
+    , th-abstraction          >=0.2.11.0 && <0.3
+    , universe-base           >=1.1      && <1.2
+    , universe-dependent-sum  >=1.1      && <1.2
+
+test-suite th-test
+  type:             exitcode-stdio-1.0
+  default-language: Haskell2010
+  hs-source-dirs:   test
+  main-is:          Test.hs
+  build-depends:
+      base
+    , dependent-sum
+    , template-haskell
+    , universe-base
+    , universe-dependent-sum
+    , universe-dependent-sum-th
