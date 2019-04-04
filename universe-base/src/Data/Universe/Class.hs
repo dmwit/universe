@@ -19,17 +19,18 @@ import Control.Monad.Trans.Reader (ReaderT (..))
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Product (Product (..))
+import Data.Functor.Sum (Sum (..))
 import Data.Int (Int, Int8, Int16, Int32, Int64)
 import Data.List (genericLength)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Map ((!), fromList)
+import Data.Proxy (Proxy (..))
 import Data.Ratio (Ratio, numerator, denominator, (%))
-import GHC.Real (Ratio (..))
+import Data.Tagged (Tagged (..), retag)
 import Data.Void (Void)
 import Data.Word  (Word, Word8, Word16, Word32, Word64)
+import GHC.Real (Ratio (..))
 import Numeric.Natural (Natural)
-import Data.Tagged (Tagged (..), retag)
-import Data.Proxy (Proxy (..))
 
 import qualified Data.Monoid as Mon
 import qualified Data.Semigroup as Semi
@@ -370,6 +371,7 @@ instance  Universe (f a)                   => Universe (IdentityT f a) where uni
 instance (Finite e, Ord e, Universe (m a)) => Universe (ReaderT e m a) where universe  = map ReaderT   universe
 instance  Universe (f (g a))               => Universe (Compose f g a) where universe  = map Compose   universe
 instance (Universe (f a), Universe (g a))  => Universe (Product f g a) where universe  = [Pair f g | (f, g) <- universe +*+ universe]
+instance (Universe (f a), Universe (g a))  => Universe (Sum     f g a) where universe  = map InL universe +++ map InR universe
 
 instance  Finite       a                   => Finite   (Identity    a) where universeF = map Identity  universeF; cardinality = retagWith Identity  cardinality
 instance  Finite    (f a)                  => Finite   (IdentityT f a) where universeF = map IdentityT universeF; cardinality = retagWith IdentityT cardinality
@@ -378,5 +380,10 @@ instance  Finite (f (g a))                 => Finite   (Compose f g a) where uni
 instance (Finite (f a), Finite (g a))      => Finite   (Product f g a) where
   universeF = liftM2 Pair universeF universeF
   cardinality = liftM2 (*)
+    (retag (cardinality :: Tagged (f a) Natural))
+    (retag (cardinality :: Tagged (g a) Natural))
+instance (Finite (f a), Finite (g a))      => Finite   (Sum f g a) where
+  universeF =  map InL universe ++ map InR universe
+  cardinality = liftM2 (+)
     (retag (cardinality :: Tagged (f a) Natural))
     (retag (cardinality :: Tagged (g a) Natural))

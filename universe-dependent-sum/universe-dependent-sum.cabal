@@ -47,4 +47,11 @@ library
   build-depends:
       base           >=4.3     && <4.13
     , dependent-sum  >=0.3.2.2 && <0.5
+    , transformers   >=0.3.0.0 && <0.6
     , universe-base  >=1.1     && <1.1.1
+
+  if impl(ghc >=7.10.3)
+    build-depends: transformers >=0.4.2.0
+
+  if !impl(ghc >=7.10.3)
+    build-depends: transformers-compat >=0.6.1 && <0.7

@@ -61,6 +61,12 @@ library
     , tagged        >=0.8.4   && <0.9
     , transformers  >=0.3.0.0 && <0.6
 
+  if impl(ghc >=7.10.3)
+    build-depends: transformers >=0.4.2.0
+
+  if !impl(ghc >=7.10.3)
+    build-depends: transformers-compat >=0.6.1 && <0.7
+
   if !impl(ghc >=7.10)
     build-depends:
         nats  >=1.1.2 && <1.2

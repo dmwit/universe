@@ -1,11 +1,13 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes #-}
 module Data.Universe.Some where
 
+import Data.Functor.Sum (Sum (..))
 import Data.List (genericLength)
 import Data.Some (Some (..))
 import Data.Universe.Class (Universe (..), Finite (..))
-import Data.Universe.Helpers (Tagged (..), Natural)
+import Data.Universe.Helpers (Tagged (..), Natural, (+++))
 
 #if MIN_VERSION_base(4,7,0)
 import Data.Type.Equality ((:~:) (..))
@@ -33,6 +35,9 @@ class UniverseSome f => FiniteSome f where
 
 mkSome :: f a -> Some f
 mkSome = This
+
+mapSome :: (forall x. f x -> g x) -> Some f -> Some g
+mapSome nt (This f) = This (nt f)
 
 -------------------------------------------------------------------------------
 -- Instances for Some
@@ -62,3 +67,10 @@ instance UniverseSome ((:=) a) where
 instance FiniteSome ((:=) a) where
   cardinalitySome = 1
 #endif
+
+-------------------------------------------------------------------------------
+-- Functors
+-------------------------------------------------------------------------------
+
+instance (UniverseSome f, UniverseSome g) => UniverseSome (Sum f g) where
+  universeSome = map (mapSome InL) universeSome +++ map (mapSome InR) universeSome
