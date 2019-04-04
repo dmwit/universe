@@ -35,6 +35,8 @@ import Language.Haskell.TH.Datatype
 -- If you need more specific, you can specify them:
 --
 -- >>> ; deriveUniverseSome [d| instance Universe b => UniverseSome (Tag b) |]
+-- >>> universe :: [Some (Tag (Maybe Bool))]
+-- [This IntTag,This (BoolTag Nothing),This (BoolTag (Just False)),This (BoolTag (Just True))]
 --
 class DeriveUniverseSome a where
   deriveUniverseSome :: a -> DecsQ

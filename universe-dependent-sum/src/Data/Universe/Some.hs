@@ -1,7 +1,10 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RankNTypes #-}
-module Data.Universe.Some where
+module Data.Universe.Some (
+  UniverseSome (..),
+  FiniteSome (..),
+  ) where
 
 import Data.Functor.Sum (Sum (..))
 import Data.List (genericLength)
