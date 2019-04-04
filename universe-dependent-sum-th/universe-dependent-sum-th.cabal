@@ -36,7 +36,7 @@ library
   exposed-modules:  Data.Universe.Some.TH
   build-depends:
       base                    >=4.3      && <4.13
-    , dependent-sum           >=0.4      && <0.5
+    , dependent-sum           >=0.4      && <0.6
     , template-haskell        >=2.5      && <2.15
     , th-abstraction          >=0.2.11.0 && <0.3
     , universe-base           >=1.1      && <1.2

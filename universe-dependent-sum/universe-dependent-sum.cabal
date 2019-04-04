@@ -46,7 +46,7 @@ library
   exposed-modules:  Data.Universe.Some
   build-depends:
       base           >=4.3     && <4.13
-    , dependent-sum  >=0.3.2.2 && <0.5
+    , dependent-sum  >=0.3.2.2 && <0.6
     , transformers   >=0.3.0.0 && <0.6
     , universe-base  >=1.1     && <1.1.1
 

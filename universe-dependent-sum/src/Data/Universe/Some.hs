@@ -36,11 +36,19 @@ class UniverseSome f => FiniteSome f where
 -- Helpers
 -------------------------------------------------------------------------------
 
+#if MIN_VERSION_dependent_sum(0,5,0)
 mkSome :: f a -> Some f
-mkSome = This
+mkSome = Some
+
+mapSome :: (forall x. f x -> g x) -> Some f -> Some g
+mapSome nt (Some f) = Some (nt f)
+#else
+mkSome :: f a -> Some f
+mkSome = This 
 
 mapSome :: (forall x. f x -> g x) -> Some f -> Some g
 mapSome nt (This f) = This (nt f)
+#endif
 
 -------------------------------------------------------------------------------
 -- Instances for Some

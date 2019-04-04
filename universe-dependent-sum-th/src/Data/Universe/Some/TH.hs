@@ -29,14 +29,14 @@ import Language.Haskell.TH.Datatype
 --
 -- >>> ; deriveUniverseSome ''Tag
 -- >>> universe :: [Some (Tag (Maybe Bool))]
--- [This IntTag,This (BoolTag Nothing),This (BoolTag (Just False)),This (BoolTag (Just True))]
+-- [Some IntTag,Some (BoolTag Nothing),Some (BoolTag (Just False)),Some (BoolTag (Just True))]
 --
 -- 'deriveUniverseSome' variant taking a 'Name' guesses simple class constraints.
 -- If you need more specific, you can specify them:
 --
 -- >>> ; deriveUniverseSome [d| instance Universe b => UniverseSome (Tag b) |]
 -- >>> universe :: [Some (Tag (Maybe Bool))]
--- [This IntTag,This (BoolTag Nothing),This (BoolTag (Just False)),This (BoolTag (Just True))]
+-- [Some IntTag,Some (BoolTag Nothing),Some (BoolTag (Just False)),Some (BoolTag (Just True))]
 --
 class DeriveUniverseSome a where
   deriveUniverseSome :: a -> DecsQ
@@ -115,7 +115,7 @@ instance DeriveUniverseSome Dec where
 -- >>> instance Show b => GShow (Tag b) where gshowsPrec = showsPrec
 --
 -- >>> $(universeSomeQ ''Tag) :: [Some (Tag Bool)]
--- [This IntTag,This (BoolTag False),This (BoolTag True)]
+-- [Some IntTag,Some (BoolTag False),Some (BoolTag True)]
 --
 universeSomeQ :: Name -> ExpQ
 universeSomeQ name = reifyDatatype name >>= universeSomeQ'
@@ -138,7 +138,11 @@ universeSomeQ' di = do
       let universe'   = [| universe |]
       let uap         = [| (<+*+>) |]
       let interleave' = [| interleave |]
+#if MIN_VERSION_dependent_sum(0,5,0)
+      let mapSome'    = [| map Some |]
+#else
       let mapSome'    = [| map This |]
+#endif
 
       let sums = map (universeForCon mapSome' universe' uap) cons
       interleave' `appE` listE sums
