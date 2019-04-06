@@ -11,3 +11,6 @@ import Data.Universe.Instances.Eq
 
 instance (Finite a, Ord b) => Ord (a -> b) where
   f `compare` g = Mon.mconcat [f x `compare` g x | x <- universeF]
+
+instance (Finite a, Ord a) => Ord (Mon.Endo a) where
+  compare (Mon.Endo f) (Mon.Endo g) = compare f g
