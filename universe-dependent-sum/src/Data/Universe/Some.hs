@@ -22,6 +22,19 @@ import Data.GADT.Compare ((:=) (..))
 -- Class
 -------------------------------------------------------------------------------
 
+-- | Auxiliary class to power @'Universe' ('Some' f)@ instance.
+-- (There are no good reasons to use @FlexibleInstances@).
+--
+-- Laws are induced via @'Universe' ('Some' f)@ instance. For example:
+--
+-- @
+-- 'elem' x 'universe' ==> 'elem' ('Some' f) 'universeSome'
+-- @
+--
+-- As 'Data.GADT.Compare.GEq' cannot be written for phantom 'Functor's, e.g.
+-- 'Control.Applicative.Const' or 'Data.Proxy.Proxy', they cannot have
+-- 'UniverseSome' instance either.
+--
 class UniverseSome f where
   universeSome :: [Some f]
 
@@ -44,7 +57,7 @@ mapSome :: (forall x. f x -> g x) -> Some f -> Some g
 mapSome nt (Some f) = Some (nt f)
 #else
 mkSome :: f a -> Some f
-mkSome = This 
+mkSome = This
 
 mapSome :: (forall x. f x -> g x) -> Some f -> Some g
 mapSome nt (This f) = This (nt f)
@@ -85,3 +98,10 @@ instance FiniteSome ((:=) a) where
 
 instance (UniverseSome f, UniverseSome g) => UniverseSome (Sum f g) where
   universeSome = map (mapSome InL) universeSome +++ map (mapSome InR) universeSome
+
+instance (FiniteSome f, FiniteSome g) => FiniteSome (Sum f g) where
+  universeFSome = map (mapSome InL) universeFSome ++ map (mapSome InR) universeFSome
+
+-- Note: Product instance is tricky, we could for special cases.
+-- e.g. '(GEq f, f ~ g) => UnvierseSome (Product f g)', but this is boring
+-- instance as we'd 'Pair' equal instances only.
