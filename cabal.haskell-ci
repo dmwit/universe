@@ -1,5 +1,5 @@
 branches: master
-doctest:  >=8.4.4
+doctest:  >=8.4.4 && <8.7
 
 constraint-set dependent-sum-0.4
   constraints: dependent-sum ==0.4.*
