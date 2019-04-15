@@ -2,7 +2,8 @@
 * Add `cardinality :: Tagged a Natural` to Finite
 * Re-arrange packages, ghc boot instances are in `universe-base`
 * Rearranged the elements in `universe :: [Rational]` to reduce allocation and increase speed.
-* Add `Darta.Universe.Generic`
+* Add `Data.Universe.Generic`
+* New package `universe-dependent-sum`
 
 1.0:
 * split package into small pieces:
