@@ -1,8 +1,10 @@
 packages:
-  base/
-  instances/base/
-  instances/containers/
-  instances/extended/
-  instances/reverse/
-  instances/trans/
-  top/
+  universe-base/
+  universe-instances-extended/
+  universe-reverse-instances/
+  universe-dependent-sum/
+  universe/
+
+packages:
+  deprecated/universe-instances-base/
+  deprecated/universe-instances-trans/

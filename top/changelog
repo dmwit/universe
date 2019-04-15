@@ -1,6 +1,0 @@
-1.0:
-* split package into small pieces:
-    * six packages, all dependencies of a top-level "universe" package
-    * a base installation requires many fewer dependencies
-* moved Data.Universe.Instances to D.U.I.Base for consistency
-* modules export the classes that they export instances of
