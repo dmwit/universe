@@ -52,8 +52,11 @@ instance DeriveUniverseSome Name where
     di <- reifyDatatype name
     let DatatypeInfo { datatypeContext = ctxt
                      , datatypeName    = parentName
+#if MIN_VERSION_th_abstraction(0,3,0)
+                     , datatypeInstTypes = vars0
+#else
                      , datatypeVars    = vars0
-                     , datatypeVariant = variant
+#endif
                      , datatypeCons    = cons
                      } = di
 
@@ -124,8 +127,11 @@ universeSomeQ' :: DatatypeInfo -> Q Exp
 universeSomeQ' di = do
   let DatatypeInfo { datatypeContext = ctxt
                    , datatypeName    = parentName
+#if MIN_VERSION_th_abstraction(0,3,0)
+                   , datatypeInstTypes = vars0
+#else
                    , datatypeVars    = vars0
-                   , datatypeVariant = variant
+#endif
                    , datatypeCons    = cons
                    } = di
 
