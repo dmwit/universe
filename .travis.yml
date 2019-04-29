@@ -4,7 +4,7 @@
 #
 # For more information, see https://github.com/haskell-CI/haskell-ci
 #
-# version: 0.3.20190409
+# version: 0.3.20190425
 #
 language: c
 dist: xenial
@@ -30,7 +30,7 @@ before_cache:
 matrix:
   include:
     - compiler: ghc-8.8.1
-      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.8.1","cabal-install-2.4"]}}
+      addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.8.1","cabal-install-3.0"]}}
       env: GHCHEAD=true
     - compiler: ghc-8.6.4
       addons: {"apt":{"sources":["hvr-ghc"],"packages":["ghc-8.6.4","cabal-install-2.4"]}}
@@ -97,6 +97,7 @@ install:
     echo "world-file:        $CABALHOME/world"          >> $CABALHOME/config
     echo "extra-prog-path:   $CABALHOME/bin"            >> $CABALHOME/config
     echo "symlink-bindir:    $CABALHOME/bin"            >> $CABALHOME/config
+    echo "installdir:        $CABALHOME/bin"            >> $CABALHOME/config
     echo "build-summary:     $CABALHOME/logs/build.log" >> $CABALHOME/config
     echo "store-dir:         $CABALHOME/store"          >> $CABALHOME/config
     echo "install-dirs user"                            >> $CABALHOME/config
