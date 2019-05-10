@@ -1,5 +1,6 @@
 name:          universe-base
 version:       1.1
+x-revision:    1
 synopsis:      A class for finite and recursively enumerable types.
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them.
@@ -73,7 +74,7 @@ library
       , void  >=0.7.2 && <0.8
 
   if !impl(ghc >=8.0)
-    build-depends: semigroups >=0.18.2 && <0.19
+    build-depends: semigroups >=0.18.2 && <0.20
 
   if impl(ghc >=7.4)
     cpp-options:      -DDEFAULT_SIGNATURES
