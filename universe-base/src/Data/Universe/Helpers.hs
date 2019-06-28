@@ -85,11 +85,6 @@ xs +++ ys = interleave [xs,ys]
 cartesianProduct :: (a -> b -> c) -> [a] -> [b] -> [c]
 -- special case: don't want to construct an infinite list of empty lists to pass to diagonal
 cartesianProduct _ []   _  = []
-cartesianProduct _ _   []  = []
--- singleton lists:
-cartesianProduct f [x] ys  = fmap (f x) ys
-cartesianProduct f xs  [y] = fmap (`f` y) xs
--- general case:
 cartesianProduct f xs  ys  = diagonal [[f x y | x <- xs] | y <- ys]
 
 -- | @'cartesianProduct' (,)@
