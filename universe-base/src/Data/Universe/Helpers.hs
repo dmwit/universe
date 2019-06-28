@@ -102,7 +102,7 @@ cartesianProduct f xs  ys  = diagonal [[f x y | x <- xs] | y <- ys]
 -- finite index in list i for each i, @[v1, ..., vn]@ has finite index in the
 -- output list.
 choices :: [[a]] -> [[a]]
-choices = foldr ((map (uncurry (:)) .) . (+*+)) [[]]
+choices = foldr (cartesianProduct (:)) [[]]
 
 retagWith :: (a -> b) -> Tagged a x -> Tagged b x
 retagWith _ (Tagged n) = Tagged n
