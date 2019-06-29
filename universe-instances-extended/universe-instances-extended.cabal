@@ -1,5 +1,6 @@
 name:          universe-instances-extended
 version:       1.1
+x-revision:    1
 synopsis:      Universe instances for types from selected extra packages
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -39,4 +40,4 @@ library
       adjunctions    >=4.3 && <4.5
     , base           >=4.3 && <4.13
     , comonad        >=4.2 && <5.1
-    , universe-base  >=1.1 && <1.1.1
+    , universe-base  >=1.1 && <1.1.2
