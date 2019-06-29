@@ -1,13 +1,16 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main (main) where
 
+import Control.Exception (evaluate)
 import Data.List (elemIndex)
 import Data.Int (Int8)
 import Test.QuickCheck
 import Data.Universe.Class (Universe(..), Finite(..))
+import Data.Universe.Helpers (interleave, choices)
 import Data.Set (Set)
 import Data.Ratio (Ratio, (%))
 import Numeric.Natural (Natural)
+import System.Timeout (timeout)
 
 import qualified Data.Set as Set
 
@@ -71,6 +74,17 @@ eitherExample = once $ u /= f
     u = elemIndex (Left True :: Either Bool Bool) universe
     f = elemIndex (Left True :: Either Bool Bool) universeF
 
+choicesLazinessProperty :: IO ()
+choicesLazinessProperty = do
+    v <- timeout oneSecond (evaluate (s !! 1))
+    case v of
+        Just _ -> putStrLn "OK"
+        Nothing -> putStrLn "ERROR: Timeout while evaluating a sneaky, self-referential collection of helpers"
+    where
+    -- generate strings from the grammar S -> x | S S
+    s = interleave [["x"], map concat $ choices [s, s]]
+    oneSecond = 1000000
+
 -------------------------------------------------------------------------------
 -- Main
 -------------------------------------------------------------------------------
@@ -97,6 +111,8 @@ main = do
     quickCheck $ finiteLaws (P :: P (Set Bool))
     quickCheck $ finiteLaws (P :: P (Set (Maybe Bool)))
     quickCheck $ finiteLaws (P :: P (Set (Set (Maybe Bool))))
+
+    choicesLazinessProperty
 
 -------------------------------------------------------------------------------
 -- Natural'
