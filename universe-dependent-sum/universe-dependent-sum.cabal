@@ -1,5 +1,6 @@
 name:          universe-dependent-sum
 version:       1.1.0.1
+x-revision:    1
 synopsis:      Universe instances for types from dependent-sum
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -53,7 +54,7 @@ library
     , template-haskell  >=2.5      && <2.15
     , th-abstraction    >=0.2.11.0 && <0.4
     , transformers      >=0.3.0.0  && <0.6
-    , universe-base     >=1.1      && <1.1.1
+    , universe-base     >=1.1      && <1.1.2
 
   if impl(ghc >=7.10.3)
     build-depends: transformers >=0.4.2.0

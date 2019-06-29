@@ -1,5 +1,6 @@
 name:          universe-instances-base
 version:       1.1
+x-revision:    1
 synopsis:      Universe instances for types from the base package
 description:
   __DEPRECATED:__ instances are moved to @universe-base@ package
@@ -33,4 +34,4 @@ library
   exposed-modules:  Data.Universe.Instances.Base
   build-depends:
       base           >=4   && <5
-    , universe-base  >=1.1 && <1.1.1
+    , universe-base  >=1.1 && <1.1.2
