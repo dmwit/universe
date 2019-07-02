@@ -39,6 +39,14 @@ import qualified Data.Map as Map
 
 -- $setup
 -- >>> import Data.List
+--
+-- -- Show (a -> b) instance (in universe-reverse-instances, but cannot depend on it here).
+-- >>> instance (Finite a, Show a, Show b) => Show (a -> b) where showsPrec n f = showsPrec n [(a, f a) | a <- universeF]
+--
+-- -- Bool is two, Three is three. More interesting type.
+-- >>> data Three = T1 | T2 | T3 deriving (Eq, Ord, Show, Enum, Bounded)
+-- >>> instance Universe Three where universe = universeDef
+-- >>> instance Finite Three
 
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
@@ -221,9 +229,16 @@ instance RationalUniverse Natural where
 --
 -------------------------------------------------------------------------------
 
--- could change the Ord constraint to an Eq one, but come on, how many finite
--- types can't be ordered?
+-- |
+-- >>> mapM_ print (universe :: [Bool -> Bool])
+-- [(False,False),(True,False)]
+-- [(False,False),(True,True)]
+-- [(False,True),(True,False)]
+-- [(False,True),(True,True)]
+--
 instance (Finite a, Ord a, Universe b) => Universe (a -> b) where
+  -- could change the Ord constraint to an Eq one, but come on, how many finite
+  -- types can't be ordered?
   universe = map tableToFunction tables where
     tables          = choices [universe | _ <- monoUniverse]
     tableToFunction = (!) . fromList . zip monoUniverse
@@ -295,6 +310,19 @@ instance Finite a => Finite (Semi.Min   a) where universeF = map Semi.Min   univ
 instance Finite a => Finite (Semi.First a) where universeF = map Semi.First universeF; cardinality = retagWith Semi.First cardinality
 instance Finite a => Finite (Semi.Last  a) where universeF = map Semi.Last  universeF; cardinality = retagWith Semi.Last  cardinality
 
+-- |
+-- >>> mapM_ print (universeF :: [Bool -> Bool])
+-- [(False,False),(True,False)]
+-- [(False,False),(True,True)]
+-- [(False,True),(True,False)]
+-- [(False,True),(True,True)]
+--
+-- >>> cardinality :: Tagged (Bool -> Three) Natural
+-- Tagged 9
+--
+-- >>> cardinality :: Tagged (Three -> Bool) Natural
+-- Tagged 8
+--
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
   universeF = map tableToFunction tables where
     tables          = sequence [universeF | _ <- monoUniverse]
@@ -327,6 +355,13 @@ instance Finite a => Finite (Tagged b a) where cardinality = retagWith Tagged ca
 -- containers
 -------------------------------------------------------------------------------
 
+-- |
+-- >>> mapM_ print (universe :: [Set.Set Bool])
+-- fromList []
+-- fromList [False]
+-- fromList [True]
+-- fromList [False,True]
+--
 instance (Ord a, Universe a) => Universe (Set.Set a) where
     universe = Set.empty : go universe
       where
@@ -337,10 +372,22 @@ instance (Ord a, Universe a) => Universe (Set.Set a) where
             inter []     = []
             inter (y:ys) = y : Set.insert x y : inter ys
 
-
 instance (Ord a, Finite a) => Finite (Set.Set a) where
     cardinality = retag (fmap (2 ^) (cardinality :: Tagged a Natural))
 
+-- |
+-- >>> mapM_ print (universe :: [Map.Map Bool Bool])
+-- fromList []
+-- fromList [(True,False)]
+-- fromList [(False,False)]
+-- fromList [(True,True)]
+-- fromList [(False,False),(True,False)]
+-- fromList [(False,True)]
+-- fromList [(False,False),(True,True)]
+-- fromList [(False,True),(True,False)]
+-- fromList [(False,True),(True,True)]
+--
+--
 instance (Ord k, Finite k, Universe v) => Universe (Map.Map k v) where
   universe = map tableToFunction tables where
     tables          = choices [universe | _ <- monoUniverse]
