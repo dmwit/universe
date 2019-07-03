@@ -38,6 +38,19 @@ library
   exposed-modules:  Data.Universe.Instances.Extended
   build-depends:
       adjunctions    >=4.3 && <4.5
-    , base           >=4.3 && <4.13
     , comonad        >=4.2 && <5.1
+    , containers
     , universe-base  >=1.1 && <1.1.2
+
+  if impl(ghc >=8.6.1)
+    build-depends:   base           >=4.12 && <4.13
+
+  if impl(ghc  <8.0.1)
+    build-depends:   base           >=4.3  && <4.13
+                   , contravariant
+                   , semigroups
+
+  if impl(ghc >=8.0.1)
+    build-depends:   base           >=4.9  && <4.13
+                   , contravariant
+
