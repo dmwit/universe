@@ -42,11 +42,6 @@ import qualified Data.Map as Map
 --
 -- -- Show (a -> b) instance (in universe-reverse-instances, but cannot depend on it here).
 -- >>> instance (Finite a, Show a, Show b) => Show (a -> b) where showsPrec n f = showsPrec n [(a, f a) | a <- universeF]
---
--- -- Bool is two, Three is three. More interesting type.
--- >>> data Three = T1 | T2 | T3 deriving (Eq, Ord, Show, Enum, Bounded)
--- >>> instance Universe Three where universe = universeDef
--- >>> instance Finite Three
 
 -- | Creating an instance of this class is a declaration that your type is
 -- recursively enumerable (and that 'universe' is that enumeration). In
@@ -317,10 +312,10 @@ instance Finite a => Finite (Semi.Last  a) where universeF = map Semi.Last  univ
 -- [(False,True),(True,False)]
 -- [(False,True),(True,True)]
 --
--- >>> cardinality :: Tagged (Bool -> Three) Natural
+-- >>> cardinality :: Tagged (Bool -> Ordering) Natural
 -- Tagged 9
 --
--- >>> cardinality :: Tagged (Three -> Bool) Natural
+-- >>> cardinality :: Tagged (Ordering -> Bool) Natural
 -- Tagged 8
 --
 instance (Ord a, Finite a, Finite b) => Finite (a -> b) where
