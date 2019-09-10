@@ -1,3 +1,6 @@
+1.1.1
+* Add `Predicate` and `Op` instances
+
 1.1
 * Add `cardinality :: Tagged a Natural` to Finite
 * Re-arrange packages, ghc boot instances are in `universe-base`
@@ -5,9 +8,9 @@
 * Add `Data.Universe.Generic`
 * New package `universe-dependent-sum`
 
-1.0:
+1.0
 * split package into small pieces:
-    * six packages, all dependencies of a top-level "universe" package
-    * a base installation requires many fewer dependencies
+* six packages, all dependencies of a top-level "universe" package
+* a base installation requires many fewer dependencies
 * moved Data.Universe.Instances to D.U.I.Base for consistency
 * modules export the classes that they export instances of
