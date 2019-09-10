@@ -1,6 +1,5 @@
 name:          universe-instances-extended
 version:       1.1.1
-x-revision:    1
 synopsis:      Universe instances for types from selected extra packages
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
