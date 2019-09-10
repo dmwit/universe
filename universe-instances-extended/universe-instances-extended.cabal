@@ -1,5 +1,5 @@
 name:          universe-instances-extended
-version:       1.1
+version:       1.1.1
 x-revision:    1
 synopsis:      Universe instances for types from selected extra packages
 description:
@@ -43,14 +43,13 @@ library
     , universe-base  >=1.1 && <1.1.2
 
   if impl(ghc >=8.6.1)
-    build-depends:   base           >=4.12 && <4.13
+    build-depends:   base           >=4.12 && <4.14
 
   if impl(ghc  <8.0.1)
-    build-depends:   base           >=4.3  && <4.13
+    build-depends:   base           >=4.3  && <4.14
                    , contravariant
                    , semigroups
 
   if impl(ghc >=8.0.1)
-    build-depends:   base           >=4.9  && <4.13
+    build-depends:   base           >=4.9  && <4.14
                    , contravariant
-
