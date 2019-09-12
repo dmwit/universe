@@ -110,7 +110,6 @@ install:
   - cat $CABALHOME/config
   - rm -fv cabal.project cabal.project.local cabal.project.freeze
   - travis_retry ${CABAL} v2-update -v
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd /tmp && ${CABAL} v2-install $WITHCOMPILER -j2 doctest --constraint='doctest ==0.16.*' | color_cabal_output) ; fi
   # Generate cabal.project
   - rm -rf cabal.project cabal.project.local cabal.project.freeze
   - touch cabal.project
@@ -118,17 +117,19 @@ install:
     echo "packages: universe-base" >> cabal.project
     echo "packages: universe-instances-extended" >> cabal.project
     echo "packages: universe-reverse-instances" >> cabal.project
+    echo "packages: universe-some" >> cabal.project
     echo "packages: universe-dependent-sum" >> cabal.project
     echo "packages: universe" >> cabal.project
     echo "packages: deprecated/universe-instances-base" >> cabal.project
     echo "packages: deprecated/universe-instances-trans" >> cabal.project
   - |
-  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
+  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances|universe-some)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
   - if [ -f "universe-base/configure.ac" ]; then (cd "universe-base" && autoreconf -i); fi
   - if [ -f "universe-instances-extended/configure.ac" ]; then (cd "universe-instances-extended" && autoreconf -i); fi
   - if [ -f "universe-reverse-instances/configure.ac" ]; then (cd "universe-reverse-instances" && autoreconf -i); fi
+  - if [ -f "universe-some/configure.ac" ]; then (cd "universe-some" && autoreconf -i); fi
   - if [ -f "universe-dependent-sum/configure.ac" ]; then (cd "universe-dependent-sum" && autoreconf -i); fi
   - if [ -f "universe/configure.ac" ]; then (cd "universe" && autoreconf -i); fi
   - if [ -f "deprecated/universe-instances-base/configure.ac" ]; then (cd "deprecated/universe-instances-base" && autoreconf -i); fi
@@ -150,6 +151,7 @@ script:
   - PKGDIR_universe_base="$(find . -maxdepth 1 -type d -regex '.*/universe-base-[0-9.]*')"
   - PKGDIR_universe_instances_extended="$(find . -maxdepth 1 -type d -regex '.*/universe-instances-extended-[0-9.]*')"
   - PKGDIR_universe_reverse_instances="$(find . -maxdepth 1 -type d -regex '.*/universe-reverse-instances-[0-9.]*')"
+  - PKGDIR_universe_some="$(find . -maxdepth 1 -type d -regex '.*/universe-some-[0-9.]*')"
   - PKGDIR_universe_dependent_sum="$(find . -maxdepth 1 -type d -regex '.*/universe-dependent-sum-[0-9.]*')"
   - PKGDIR_universe="$(find . -maxdepth 1 -type d -regex '.*/universe-[0-9.]*')"
   - PKGDIR_universe_instances_base="$(find . -maxdepth 1 -type d -regex '.*/universe-instances-base-[0-9.]*')"
@@ -161,12 +163,13 @@ script:
     echo "packages: ${PKGDIR_universe_base}" >> cabal.project
     echo "packages: ${PKGDIR_universe_instances_extended}" >> cabal.project
     echo "packages: ${PKGDIR_universe_reverse_instances}" >> cabal.project
+    echo "packages: ${PKGDIR_universe_some}" >> cabal.project
     echo "packages: ${PKGDIR_universe_dependent_sum}" >> cabal.project
     echo "packages: ${PKGDIR_universe}" >> cabal.project
     echo "packages: ${PKGDIR_universe_instances_base}" >> cabal.project
     echo "packages: ${PKGDIR_universe_instances_trans}" >> cabal.project
   - |
-  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
+  - "for pkg in $($HCPKG list --simple-output); do echo $pkg | sed 's/-[^-]*$//' | (grep -vE -- '^(universe|universe-base|universe-dependent-sum|universe-instances-base|universe-instances-extended|universe-instances-trans|universe-reverse-instances|universe-some)$' || true) | sed 's/^/constraints: /' | sed 's/$/ installed/' >> cabal.project.local; done"
   - cat cabal.project || true
   - cat cabal.project.local || true
   # Building...
@@ -177,18 +180,11 @@ script:
   - ${CABAL} v2-build $WITHCOMPILER ${TEST} ${BENCH} all | color_cabal_output
   # Testing...
   - ${CABAL} v2-test $WITHCOMPILER ${TEST} ${BENCH} all | color_cabal_output
-  # Doctest...
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_base} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_instances_extended} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_reverse_instances} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_dependent_sum} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_instances_base} && doctest  src) ; fi
-  - if [ $HCNUMVER -ge 80400 ] && [ $HCNUMVER -lt 80800 ] ; then (cd ${PKGDIR_universe_instances_trans} && doctest  src) ; fi
   # cabal check...
   - (cd ${PKGDIR_universe_base} && ${CABAL} -vnormal check)
   - (cd ${PKGDIR_universe_instances_extended} && ${CABAL} -vnormal check)
   - (cd ${PKGDIR_universe_reverse_instances} && ${CABAL} -vnormal check)
+  - (cd ${PKGDIR_universe_some} && ${CABAL} -vnormal check)
   - (cd ${PKGDIR_universe_dependent_sum} && ${CABAL} -vnormal check)
   - (cd ${PKGDIR_universe} && ${CABAL} -vnormal check)
   - (cd ${PKGDIR_universe_instances_base} && ${CABAL} -vnormal check)
@@ -204,6 +200,8 @@ script:
   - ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='dependent-sum ==0.4.*' all | color_cabal_output
   # Constraint set dependent-sum-0.5
   - if [ $HCNUMVER -ge 80000 ] ; then ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='dependent-sum ==0.5.*' all | color_cabal_output ; fi
+  # Constraint set dependent-sum-0.6
+  - if [ $HCNUMVER -ge 80000 ] && [ $HCNUMVER -lt 80800 ] ; then ${CABAL} v2-build $WITHCOMPILER --disable-tests --disable-benchmarks --constraint='dependent-sum ==0.6.*' all | color_cabal_output ; fi
 
 # REGENDATA ["--config","cabal.haskell-ci","cabal.project"]
 # EOF

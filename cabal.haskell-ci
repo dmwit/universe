@@ -1,5 +1,5 @@
 branches: master
-doctest:  >=8.4.4 && <8.7
+-- doctest:  >=8.4.4 && <8.7
 haddock: >=7.8
 
 constraint-set dependent-sum-0.4
@@ -8,3 +8,7 @@ constraint-set dependent-sum-0.4
 constraint-set dependent-sum-0.5
   ghc: >= 8.0
   constraints: dependent-sum ==0.5.*
+
+constraint-set dependent-sum-0.6
+  ghc: >= 8.0 && <8.8
+  constraints: dependent-sum ==0.6.*

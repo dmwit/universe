@@ -1,3 +1,6 @@
+1.2
+* Use universe-some-1.2, which uses a Some-type from the some-package.
+
 1.1.1
 * Add `Predicate` and `Op` instances
 
