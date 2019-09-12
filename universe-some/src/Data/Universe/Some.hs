@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RankNTypes #-}
 module Data.Universe.Some (
@@ -8,15 +7,14 @@ module Data.Universe.Some (
 
 import Data.Functor.Sum (Sum (..))
 import Data.List (genericLength)
-import Data.Some (Some (..))
+import Data.Some (Some, mapSome, mkSome, foldSome)
+import Data.Type.Equality ((:~:) (..))
 import Data.Universe.Class (Universe (..), Finite (..))
 import Data.Universe.Helpers (Tagged (..), Natural, (+++))
 
-#if MIN_VERSION_base(4,7,0)
-import Data.Type.Equality ((:~:) (..))
-#else
-import Data.GADT.Compare ((:=) (..))
-#endif
+import qualified Data.Some.GADT as G
+import qualified Data.Some.Newtype as N
+import qualified Data.Some.Church as C
 
 -------------------------------------------------------------------------------
 -- Class
@@ -35,6 +33,9 @@ import Data.GADT.Compare ((:=) (..))
 -- 'Control.Applicative.Const' or 'Data.Proxy.Proxy', they cannot have
 -- 'UniverseSome' instance either.
 --
+-- /Note:/ The 'Some' type is imported from "Data.Some", i.e. maybe
+-- either from "Data.Some.Newtype" (default) or "Data.Some.GADT" modules.
+--
 class UniverseSome f where
   universeSome :: [Some f]
 
@@ -46,51 +47,42 @@ class UniverseSome f => FiniteSome f where
   cardinalitySome = Tagged (genericLength (universeFSome :: [Some f]))
 
 -------------------------------------------------------------------------------
--- Helpers
--------------------------------------------------------------------------------
-
-#if MIN_VERSION_dependent_sum(0,5,0)
-mkSome :: f a -> Some f
-mkSome = Some
-
-mapSome :: (forall x. f x -> g x) -> Some f -> Some g
-mapSome nt (Some f) = Some (nt f)
-#else
-mkSome :: f a -> Some f
-mkSome = This
-
-mapSome :: (forall x. f x -> g x) -> Some f -> Some g
-mapSome nt (This f) = This (nt f)
-#endif
-
--------------------------------------------------------------------------------
 -- Instances for Some
 -------------------------------------------------------------------------------
 
-instance UniverseSome f => Universe (Some f) where
-  universe = universeSome
+instance UniverseSome f => Universe (N.Some f) where
+  universe = map (foldSome N.mkSome) universeSome
 
-instance FiniteSome f => Finite (Some f) where
-  universeF   = universeFSome
-  cardinality = cardinalitySome
+instance FiniteSome f => Finite (N.Some f) where
+  universeF   = map (foldSome N.mkSome) universeFSome
+  cardinality = retagSome cardinalitySome
+
+instance UniverseSome f => Universe (G.Some f) where
+  universe =  map (foldSome G.mkSome) universeSome
+
+instance FiniteSome f => Finite (G.Some f) where
+  universeF   = map (foldSome G.mkSome) universeFSome
+  cardinality = retagSome cardinalitySome
+
+instance UniverseSome f => Universe (C.Some f) where
+  universe =  map (foldSome C.mkSome) universeSome
+
+instance FiniteSome f => Finite (C.Some f) where
+  universeF   = map (foldSome C.mkSome) universeFSome
+  cardinality = retagSome cardinalitySome
+
+retagSome :: Tagged (Some f) Natural -> Tagged (some f) Natural
+retagSome (Tagged n) = Tagged n
 
 -------------------------------------------------------------------------------
 -- Type equality is singleton
 -------------------------------------------------------------------------------
 
-#if MIN_VERSION_base(4,7,0)
 instance UniverseSome ((:~:) a) where
   universeSome = [mkSome Refl]
 
 instance FiniteSome ((:~:) a) where
   cardinalitySome = 1
-#else
-instance UniverseSome ((:=) a) where
-  universeSome = [mkSome Refl]
-
-instance FiniteSome ((:=) a) where
-  cardinalitySome = 1
-#endif
 
 -------------------------------------------------------------------------------
 -- Functors

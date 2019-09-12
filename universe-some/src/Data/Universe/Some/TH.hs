@@ -10,7 +10,7 @@ module Data.Universe.Some.TH (
   ) where
 
 import Control.Monad (forM, mapM, unless)
-import Data.Some (Some (..))
+import Data.Some (Some, mkSome)
 import Data.Universe.Class (Universe (..))
 import Data.Universe.Some (UniverseSome (..))
 import Data.Universe.Helpers (interleave, (<+*+>))
@@ -144,11 +144,7 @@ universeSomeQ' di = do
       let universe'   = [| universe |]
       let uap         = [| (<+*+>) |]
       let interleave' = [| interleave |]
-#if MIN_VERSION_dependent_sum(0,5,0)
-      let mapSome'    = [| map Some |]
-#else
-      let mapSome'    = [| map This |]
-#endif
+      let mapSome'    = [| map mkSome |]
 
       let sums = map (universeForCon mapSome' universe' uap) cons
       interleave' `appE` listE sums

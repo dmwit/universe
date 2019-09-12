@@ -1,7 +1,6 @@
-name:          universe-dependent-sum
-version:       1.1.0.1
-x-revision:    2
-synopsis:      Universe instances for types from dependent-sum
+name:          universe-some
+version:       1.2
+synopsis:      Universe instances for Some from some
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
   defined in @universe-base@ package:
@@ -23,14 +22,23 @@ description:
 homepage:      https://github.com/dmwit/universe
 license:       BSD3
 license-file:  LICENSE
-author:        Daniel Wagner
+author:        Daniel Wagner, Oleg Grenrus
 maintainer:    me@dmwit.com
-copyright:     Daniel Wagner 2014
+copyright:     Daniel Wagner 2014, Oleg Grenrus 2019
 category:      Data
 build-type:    Simple
 cabal-version: >=1.10
 tested-with:
-  GHC ==8.8.1 || ==8.6.4 || ==8.4.4 || ==8.2.2 || ==8.0.2 || ==7.10.3 || ==7.8.4 || ==7.6.3 || ==7.4.2 || ==7.0.4
+  GHC ==7.0.4
+   || ==7.4.2
+   || ==7.6.3
+   || ==7.8.4
+   || ==7.10.3
+   || ==8.0.2
+   || ==8.2.2
+   || ==8.4.4
+   || ==8.6.4
+   || ==8.8.1
 
 source-repository head
   type:     git
@@ -45,11 +53,34 @@ library
   default-language: Haskell2010
   hs-source-dirs:   src
   exposed-modules:
-    Data.Universe.DependentSum
+    Data.Universe.Some
+    Data.Universe.Some.TH
 
   build-depends:
       base              >=4.3      && <4.14
-    , dependent-sum     >=0.3.2.2  && <0.7
     , some              >=1        && <1.1
+    , template-haskell  >=2.5      && <2.16
+    , th-abstraction    >=0.2.11.0 && <0.4
+    , transformers      >=0.3.0.0  && <0.6
     , universe-base     >=1.1      && <1.1.2
-    , universe-some     >=1.2      && <1.3
+
+  if !impl(ghc >=7.8)
+    build-depends: type-equality >=1 && <1.1
+
+  if impl(ghc >=7.10.3)
+    build-depends: transformers >=0.4.2.0
+
+  if !impl(ghc >=7.10.3)
+    build-depends: transformers-compat >=0.6.1 && <0.7
+
+test-suite th-test
+  type:             exitcode-stdio-1.0
+  default-language: Haskell2010
+  hs-source-dirs:   test
+  main-is:          Test.hs
+  build-depends:
+      base
+    , some
+    , template-haskell
+    , universe-base
+    , universe-some
