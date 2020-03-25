@@ -1,5 +1,6 @@
 name:          universe-instances-extended
 version:       1.1.1
+x-revision:    1
 synopsis:      Universe instances for types from selected extra packages
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -20,7 +21,17 @@ category:      Data
 build-type:    Simple
 cabal-version: >=1.10
 tested-with:
-  GHC ==8.8.1 || ==8.6.5 || ==8.4.4 || ==8.2.2 || ==8.0.2 || ==7.10.3 || ==7.8.4 || ==7.6.3 || ==7.4.2 || ==7.0.4
+  GHC ==7.0.4
+   || ==7.4.2
+   || ==7.6.3
+   || ==7.8.4
+   || ==7.10.3
+   || ==8.0.2
+   || ==8.2.2
+   || ==8.4.4
+   || ==8.6.5
+   || ==8.8.3
+   || ==8.10.1
 
 source-repository head
   type:     git
@@ -42,13 +53,15 @@ library
     , universe-base  >=1.1 && <1.1.2
 
   if impl(ghc >=8.6.1)
-    build-depends:   base           >=4.12 && <4.14
+    build-depends: base >=4.12 && <4.15
 
-  if impl(ghc  <8.0.1)
-    build-depends:   base           >=4.3  && <4.14
-                   , contravariant
-                   , semigroups
+  if impl(ghc <8.0.1)
+    build-depends:
+        base           >=4.3 && <4.12
+      , contravariant
+      , semigroups
 
   if impl(ghc >=8.0.1)
-    build-depends:   base           >=4.9  && <4.14
-                   , contravariant
+    build-depends:
+        base           >=4.9 && <4.15
+      , contravariant
