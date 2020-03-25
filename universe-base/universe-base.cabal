@@ -1,7 +1,7 @@
-name:          universe-base
-version:       1.1.1
-x-revision:    1
-synopsis:      A class for finite and recursively enumerable types.
+name:               universe-base
+version:            1.1.1
+x-revision:         2
+synopsis:           A class for finite and recursively enumerable types.
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them.
   .
@@ -14,18 +14,28 @@ description:
   for types in GHC boot libraries.
   For more instances check @universe-instances-*@ packages.
 
-homepage:      https://github.com/dmwit/universe
-license:       BSD3
-license-file:  LICENSE
-author:        Daniel Wagner
-maintainer:    me@dmwit.com
-copyright:     2014 Daniel Wagner
-category:      Data
-build-type:    Simple
-cabal-version: >=1.10
+homepage:           https://github.com/dmwit/universe
+license:            BSD3
+license-file:       LICENSE
+author:             Daniel Wagner
+maintainer:         me@dmwit.com
+copyright:          2014 Daniel Wagner
+category:           Data
+build-type:         Simple
+cabal-version:      >=1.10
 extra-source-files: changelog
 tested-with:
-  GHC ==8.8.1 || ==8.6.5 || ==8.4.4 || ==8.2.2 || ==8.0.2 || ==7.10.3 || ==7.8.4 || ==7.6.3 || ==7.4.2 || ==7.0.4
+  GHC ==7.0.4
+   || ==7.4.2
+   || ==7.6.3
+   || ==7.8.4
+   || ==7.10.3
+   || ==8.0.2
+   || ==8.2.2
+   || ==8.4.4
+   || ==8.6.5
+   || ==8.8.3
+   || ==8.10.1
 
 source-repository head
   type:     git
@@ -43,12 +53,11 @@ library
     Data.Universe.Class
     Data.Universe.Helpers
 
-  if impl(ghc >= 7.2)
-    exposed-modules:
-      Data.Universe.Generic
+  if impl(ghc >=7.2)
+    exposed-modules: Data.Universe.Generic
+
     if impl(ghc <7.6)
-      build-depends:
-        ghc-prim
+      build-depends: ghc-prim
 
   other-extensions:
     BangPatterns
@@ -58,7 +67,7 @@ library
     TypeFamilies
 
   build-depends:
-      base          >=4.3     && <4.14
+      base          >=4.3     && <4.15
     , containers    >=0.4.0.0 && <0.7
     , tagged        >=0.8.4   && <0.9
     , transformers  >=0.3.0.0 && <0.6
@@ -95,5 +104,4 @@ test-suite tests
     , universe-base
 
   if !impl(ghc >=7.10)
-    build-depends:
-        nats
+    build-depends: nats

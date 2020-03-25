@@ -4,6 +4,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Data.Universe.DependentSum () where
 
+#if MIN_VERSION_dependent_sum(0,7,0)
+import Data.Universe.Some ()
+#else
+
+
 import Data.Universe.Class (Universe (..), Finite (..))
 import Data.Universe.Some (UniverseSome (..), FiniteSome (..))
 import Data.Universe.Helpers (Tagged (..), Natural, (+++))
@@ -36,3 +41,5 @@ instance FiniteSome f => Finite (DS.Some f) where
 
 retagSome :: Tagged (Some f) Natural -> Tagged (some f) Natural
 retagSome (Tagged n) = Tagged n
+
+#endif
