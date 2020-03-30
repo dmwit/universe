@@ -3,7 +3,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
-import Data.Universe.Class (Universe (..))
+import Data.Universe.Class (Universe (..), Finite (..))
 import Data.Some (Some (..))
 import Data.GADT.Show
 import Data.Universe.Some (UniverseSome (..))
@@ -54,6 +54,23 @@ instance Universe b => UniverseSome (Tag3 b) where
     universeSome = $(universeSomeQ ''Tag3)
 
 -------------------------------------------------------------------------------
+-- Issue 53
+-------------------------------------------------------------------------------
+
+data Foo a where
+  MkFoo :: Foo Int
+data Bar a where
+  MkBar :: Bool -> Foo a -> Bar a
+
+deriving instance Show (Foo a)
+deriving instance Show (Bar a)
+instance GShow Foo where gshowsPrec = showsPrec
+instance GShow Bar where gshowsPrec = showsPrec
+
+deriveFiniteSome ''Foo
+deriveFiniteSome ''Bar
+
+-------------------------------------------------------------------------------
 -- Main
 -------------------------------------------------------------------------------
 
@@ -62,3 +79,6 @@ main = do
   print (universe :: [Some (Tag (Maybe Bool)) ])
   print (universe :: [Some (Tag2 (Maybe Bool)) ])
   print (universe :: [Some (Tag3 (Maybe Bool)) ])
+
+  print (universeF :: [Some Foo])
+  print (universeF :: [Some Bar])
