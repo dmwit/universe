@@ -100,7 +100,7 @@ test-suite tests
   build-depends:
       base
     , containers
-    , QuickCheck     >=2.8.2 && <2.14
+    , QuickCheck     >=2.8.2 && <2.15
     , universe-base
 
   if !impl(ghc >=7.10)
