@@ -1,0 +1,5 @@
+1.3
+* DEPRECATED, use universe-some
+* Data.Universe.DependentSum re-exports Data.Universe.Some
+* Don't depend on dependent-sum, you should use dependent-sum >=0.7, which uses
+some package
