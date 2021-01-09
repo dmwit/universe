@@ -1,3 +1,9 @@
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >=704
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 module Data.Universe.Helpers (
   -- | This module is for functions that are useful for writing instances,
   -- but not necessarily for using them (and hence are not exported by the

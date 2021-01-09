@@ -1,3 +1,9 @@
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >=704
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 module Data.Universe.Instances.Ord (
   -- | An 'Ord' instance for functions, given the input is 'Finite' and the
   -- output is 'Ord'. Compares pointwise, with higher priority to inputs

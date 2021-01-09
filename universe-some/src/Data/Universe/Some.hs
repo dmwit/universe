@@ -1,5 +1,12 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RankNTypes #-}
+-- Data.Type.Equality is Trustworthy since base-4.9
+#if __GLASGOW_HASKELL__ >=704 && MIN_VERSION_base(4,9,0)
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 module Data.Universe.Some (
   UniverseSome (..),
   FiniteSome (..),

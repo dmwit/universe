@@ -1,3 +1,9 @@
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >=704
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 -- | A 'Foldable' instance for functions, given the input is 'Finite', and
 -- a 'Traversable' instance for functions, given the input is 'Ord' and
 -- 'Finite'.

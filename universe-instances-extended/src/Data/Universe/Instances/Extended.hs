@@ -2,6 +2,12 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
+-- Data.Coerce is Unsafe
+#if __GLASGOW_HASKELL__ >=704 && !MIN_VERSION_base(4,7,0)
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 module Data.Universe.Instances.Extended (
   -- | Instances for 'Universe' and 'Finite' for function-like functors and the empty type.
   Universe(..), Finite(..)

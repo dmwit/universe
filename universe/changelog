@@ -1,3 +1,6 @@
+1.2.1
+* Explicitly mark modules as Safe or Trustworthy
+
 1.2
 * Use universe-some-1.2, which uses a Some-type from the some-package.
 
