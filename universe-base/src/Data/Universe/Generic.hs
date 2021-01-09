@@ -14,13 +14,14 @@ import Data.Universe.Class
 import Data.Universe.Helpers
 
 -- $setup
--- >>> :set -XDeriveGeneric -XEmptyDataDeriving
+-- >>> :set -XDeriveGeneric
+-- >>> import GHC.Generics
  
 class GUniverse f where
   guniverse :: [f a]
 
 instance GUniverseSum f => GUniverse (M1 i c f) where
-  guniverse = map M1 $ interleave $ guniverseSum
+  guniverse = map M1 $ interleave guniverseSum
 
 class GUniverseSum f where
   guniverseSum :: [[f a]]
@@ -52,10 +53,6 @@ instance Universe a => GUniverseProduct (K1 r a) where
 
 -- |
 --
--- >>> data Zero deriving (Show, Generic)
--- >>> universeGeneric :: [Zero]
--- []
---
 -- >>> data One = One deriving (Show, Generic)
 -- >>> universeGeneric :: [One] 
 -- [One]
@@ -75,3 +72,13 @@ instance Universe a => GUniverseProduct (K1 r a) where
 --
 universeGeneric :: (Generic a, GUniverse (Rep a)) => [a]
 universeGeneric = map to guniverse 
+
+#if __GLASGOW_HASKELL__ >= 804
+-- $empty
+--
+-- >>> :set -XEmptyDataDeriving
+--
+-- >>> data Zero deriving (Show, Generic)
+-- >>> universeGeneric :: [Zero]
+-- []
+#endif

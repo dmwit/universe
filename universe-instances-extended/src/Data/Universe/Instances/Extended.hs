@@ -31,6 +31,8 @@ import Data.Coerce (coerce)
 -- $setup
 --
 -- >>> import Data.Int (Int8)
+-- >>> import Data.Functor.Contravariant (Predicate (..))
+-- >>> import Data.Universe.Helpers (retag, Tagged, Natural)
 --
 -- -- Show (a -> b) instance (in universe-reverse-instances, but cannot depend on it here).
 -- >>> instance (Finite a, Show a, Show b) => Show (a -> b) where showsPrec n f = showsPrec n [(a, f a) | a <- universeF]

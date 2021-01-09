@@ -45,6 +45,7 @@ import qualified Data.Map as Map
 
 -- $setup
 -- >>> import Data.List
+-- >>> import Data.Universe.Helpers
 --
 -- -- Show (a -> b) instance (in universe-reverse-instances, but cannot depend on it here).
 -- >>> instance (Finite a, Show a, Show b) => Show (a -> b) where showsPrec n f = showsPrec n [(a, f a) | a <- universeF]
@@ -357,6 +358,7 @@ instance Finite a => Finite (Tagged b a) where cardinality = retagWith Tagged ca
 -------------------------------------------------------------------------------
 
 -- |
+-- >>> import qualified Data.Set as Set
 -- >>> mapM_ print (universe :: [Set.Set Bool])
 -- fromList []
 -- fromList [False]
@@ -377,6 +379,7 @@ instance (Ord a, Finite a) => Finite (Set.Set a) where
     cardinality = retag (fmap (2 ^) (cardinality :: Tagged a Natural))
 
 -- |
+-- >>> import qualified Data.Map as Map
 -- >>> mapM_ print (universe :: [Map.Map Bool Bool])
 -- fromList []
 -- fromList [(True,False)]

@@ -22,6 +22,9 @@ import Data.Universe.Helpers (interleave, (<+*+>))
 import Language.Haskell.TH
 import Language.Haskell.TH.Datatype
 
+-- $setup
+-- >>> :m + Data.Some Data.Universe.Class Data.Universe.Some
+
 -- | Derive the @'UniverseSome' n@ instance.
 --
 -- >>> :set -XGADTs -XTemplateHaskell -XStandaloneDeriving
@@ -32,14 +35,21 @@ import Language.Haskell.TH.Datatype
 -- >>> deriving instance Show b => Show (Tag b a)
 -- >>> instance Show b => GShow (Tag b) where gshowsPrec = showsPrec
 --
--- >>> ; deriveUniverseSome ''Tag
+-- (@data Unused@ is to workaround bug in older GHCi)
+-- >>> data Unused; $(deriveUniverseSome ''Tag)
+--
 -- >>> universe :: [Some (Tag (Maybe Bool))]
 -- [Some IntTag,Some (BoolTag Nothing),Some (BoolTag (Just False)),Some (BoolTag (Just True))]
 --
 -- 'deriveUniverseSome' variant taking a 'Name' guesses simple class constraints.
 -- If you need more specific, you can specify them:
+-- (Note: on older GHCs this will warn, as the instance definition doesn't have all methods defined).
 --
--- >>> ; deriveUniverseSome [d| instance Universe b => UniverseSome (Tag b) |]
+-- >>> data Tag b a where IntTag :: Tag b Int; BoolTag :: b -> Tag b Bool
+-- >>> deriving instance Show b => Show (Tag b a)
+-- >>> instance Show b => GShow (Tag b) where gshowsPrec = showsPrec
+-- >>> data Unused; $(deriveUniverseSome [d| instance Universe b => UniverseSome (Tag b) |])
+-- ...
 -- >>> universe :: [Some (Tag (Maybe Bool))]
 -- [Some IntTag,Some (BoolTag Nothing),Some (BoolTag (Just False)),Some (BoolTag (Just True))]
 --

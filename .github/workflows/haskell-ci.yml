@@ -122,6 +122,15 @@ jobs:
           rm -f cabal-plan.xz
           chmod a+x $HOME/.cabal/bin/cabal-plan
           cabal-plan --version
+      - name: install cabal-docspec
+        run: |
+          mkdir -p $HOME/.cabal/bin
+          curl -sL https://github.com/phadej/cabal-extras/releases/download/cabal-docspec-0.0.0.20210108/cabal-docspec-0.0.0.20210108.xz > cabal-docspec.xz
+          echo '9123f8d5d09beaf3124331c4db1de3e2934b682cd4deebdcdbd3e71b73016b7c  cabal-docspec.xz' | sha256sum -c -
+          xz -d < cabal-docspec.xz > $HOME/.cabal/bin/cabal-docspec
+          rm -f cabal-docspec.xz
+          chmod a+x $HOME/.cabal/bin/cabal-docspec
+          cabal-docspec --version
       - name: checkout
         uses: actions/checkout@v2
         with:
@@ -207,6 +216,10 @@ jobs:
       - name: tests
         run: |
           $CABAL v2-test $ARG_COMPILER $ARG_TESTS $ARG_BENCH all --test-show-details=direct
+      - name: docspec
+        run: |
+          if [ $((HCNUMVER >= 70400)) -ne 0 ] ; then $CABAL v2-build $ARG_COMPILER $ARG_TESTS $ARG_BENCH all ; fi
+          if [ $((HCNUMVER >= 70400)) -ne 0 ] ; then cabal-docspec $ARG_COMPILER ; fi
       - name: cabal check
         run: |
           cd ${PKGDIR_universe_base} || false
