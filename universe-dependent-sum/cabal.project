@@ -1,0 +1,4 @@
+-- this project file allows to test this package in isolation
+packages: .
+packages: ../universe-base
+packages: ../universe-some

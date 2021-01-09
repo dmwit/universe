@@ -3,6 +3,12 @@
 #ifdef DEFAULT_SIGNATURES
 {-# LANGUAGE DefaultSignatures #-}
 #endif
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >=704
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 -- | Bottoms are ignored for this entire module:
 -- only fully-defined inhabitants are considered inhabitants.
 module Data.Universe.Class

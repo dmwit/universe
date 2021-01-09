@@ -1,0 +1,2 @@
+-- this project file allows to test universe-base in isolation
+packages: .

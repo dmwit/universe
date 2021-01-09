@@ -1,7 +1,6 @@
-name:          universe-instances-extended
-version:       1.1.1
-x-revision:    1
-synopsis:      Universe instances for types from selected extra packages
+name:               universe-instances-extended
+version:            1.1.2
+synopsis:           Universe instances for types from selected extra packages
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
   defined in @universe-base@ package:
@@ -11,15 +10,16 @@ description:
   class Universe a => Finite a where universeF :: [a]; universeF = universe
   @
 
-homepage:      https://github.com/dmwit/universe
-license:       BSD3
-license-file:  LICENSE
-author:        Daniel Wagner
-maintainer:    me@dmwit.com
-copyright:     Daniel Wagner 2014
-category:      Data
-build-type:    Simple
-cabal-version: >=1.10
+homepage:           https://github.com/dmwit/universe
+license:            BSD3
+license-file:       LICENSE
+author:             Daniel Wagner
+maintainer:         me@dmwit.com
+copyright:          Daniel Wagner 2014
+category:           Data
+build-type:         Simple
+cabal-version:      >=1.10
+extra-source-files: changelog
 tested-with:
   GHC ==7.0.4
    || ==7.4.2
@@ -47,21 +47,25 @@ library
   hs-source-dirs:   src
   exposed-modules:  Data.Universe.Instances.Extended
   build-depends:
-      adjunctions    >=4.3 && <4.5
-    , comonad        >=4.2 && <5.1
+      base           >=4.3   && <4.15
     , containers
-    , universe-base  >=1.1 && <1.1.2
+    , universe-base  >=1.1.2 && <1.1.3
 
-  if impl(ghc >=8.6.1)
-    build-depends: base >=4.12 && <4.15
-
-  if impl(ghc <8.0.1)
+  if impl(ghc >=7.4)
+    -- adjunctions-4.4 and comonad-5.0.8 have explicit annotations
     build-depends:
-        base           >=4.3 && <4.12
-      , contravariant
-      , semigroups
+        adjunctions  >=4.4   && <4.5
+      , comonad      >=5.0.8 && <5.1
 
-  if impl(ghc >=8.0.1)
+  else
     build-depends:
-        base           >=4.9 && <4.15
-      , contravariant
+        adjunctions  >=4.3 && <4.4
+      , comonad      >=4.2 && <5.1
+
+  if !impl(ghc >=8.6)
+    build-depends: contravariant >=1.5.3 && <1.6
+
+  if impl(ghc >=9.0)
+    -- these flags may abort compilation with GHC-8.10
+    -- https://gitlab.haskell.org/ghc/ghc/-/merge_requests/3295
+    ghc-options: -Winferred-safe-imports -Wmissing-safe-haskell-mode

@@ -1,6 +1,6 @@
 name:          universe-instances-trans
 version:       1.1
-x-revision:    2
+x-revision:    3
 synopsis:
   Universe instances for types from the transformers and mtl packages
 
@@ -46,4 +46,4 @@ library
   exposed-modules:  Data.Universe.Instances.Trans
   build-depends:
       base           >=4   && <5
-    , universe-base  >=1.1 && <1.1.2
+    , universe-base  >=1.1 && <1.1.3

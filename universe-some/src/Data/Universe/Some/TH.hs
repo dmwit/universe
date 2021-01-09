@@ -4,6 +4,11 @@
 #else
 {-# LANGUAGE TemplateHaskell #-}
 #endif
+#if __GLASGOW_HASKELL__ >=704 && MIN_VERSION_template_haskell(2,12,0)
+{-# LANGUAGE Safe #-}
+#elif __GLASGOW_HASKELL__ >=702
+{-# LANGUAGE Trustworthy #-}
+#endif
 module Data.Universe.Some.TH (
   DeriveUniverseSome (..),
   universeSomeQ,
