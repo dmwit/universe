@@ -1,6 +1,6 @@
 name:          universe-instances-base
 version:       1.1
-x-revision:    3
+x-revision:    2
 synopsis:      Universe instances for types from the base package
 description:
   __DEPRECATED:__ instances are moved to @universe-base@ package
