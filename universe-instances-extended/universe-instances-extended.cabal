@@ -1,5 +1,6 @@
 name:               universe-instances-extended
 version:            1.1.2
+x-revision:         1
 synopsis:           Universe instances for types from selected extra packages
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -31,7 +32,8 @@ tested-with:
    || ==8.4.4
    || ==8.6.5
    || ==8.8.4
-   || ==8.10.3
+   || ==8.10.4
+   || ==9.0.1
 
 source-repository head
   type:     git
@@ -47,7 +49,7 @@ library
   hs-source-dirs:   src
   exposed-modules:  Data.Universe.Instances.Extended
   build-depends:
-      base           >=4.3   && <4.15
+      base           >=4.3   && <4.16
     , containers
     , universe-base  >=1.1.2 && <1.1.3
 
