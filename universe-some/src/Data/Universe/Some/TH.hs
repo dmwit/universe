@@ -24,6 +24,7 @@ import Language.Haskell.TH.Datatype
 
 -- $setup
 -- >>> :m + Data.Some Data.Universe.Class Data.Universe.Some
+-- >>> import Language.Haskell.TH (DecsQ)
 
 -- | Derive the @'UniverseSome' n@ instance.
 --
@@ -48,7 +49,7 @@ import Language.Haskell.TH.Datatype
 -- >>> data Tag b a where IntTag :: Tag b Int; BoolTag :: b -> Tag b Bool
 -- >>> deriving instance Show b => Show (Tag b a)
 -- >>> instance Show b => GShow (Tag b) where gshowsPrec = showsPrec
--- >>> data Unused; $(deriveUniverseSome [d| instance Universe b => UniverseSome (Tag b) |])
+-- >>> data Unused; $(deriveUniverseSome ([d| instance Universe b => UniverseSome (Tag b) |] :: DecsQ))
 -- ...
 -- >>> universe :: [Some (Tag (Maybe Bool))]
 -- [Some IntTag,Some (BoolTag Nothing),Some (BoolTag (Just False)),Some (BoolTag (Just True))]

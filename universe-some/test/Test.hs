@@ -8,6 +8,7 @@ import Data.Some (Some (..))
 import Data.GADT.Show
 import Data.Universe.Some (UniverseSome (..))
 import Data.Universe.Some.TH
+import Language.Haskell.TH (DecsQ)
 
 -------------------------------------------------------------------------------
 -- Name
@@ -34,7 +35,7 @@ data Tag2 b a where
 deriving instance Show b => Show (Tag2 b a)
 instance Show b => GShow (Tag2 b) where gshowsPrec = showsPrec
 
-deriveUniverseSome [d| instance Universe b => UniverseSome (Tag2 b) |]
+deriveUniverseSome ([d| instance Universe b => UniverseSome (Tag2 b) |] :: DecsQ)
 
 -------------------------------------------------------------------------------
 -- Manual
