@@ -43,6 +43,14 @@ import qualified Data.Semigroup as Semi
 import qualified Data.Set as Set
 import qualified Data.Map as Map
 
+#if MIN_VERSION_base(4,16,0)
+import Data.Tuple (Solo (..))
+#elif MIN_VERSION_base(4,15,0)
+import GHC.Tuple (Solo (..))
+#else
+import Data.Tuple.Solo (Solo (..))
+#endif
+
 -- $setup
 -- >>> import Data.List
 -- >>> import Data.Universe.Helpers
@@ -438,3 +446,13 @@ instance (Finite (f a), Finite (g a))      => Finite   (Sum f g a) where
   cardinality = liftM2 (+)
     (retag (cardinality :: Tagged (f a) Natural))
     (retag (cardinality :: Tagged (g a) Natural))
+
+-------------------------------------------------------------------------------
+-- OneTuple
+-------------------------------------------------------------------------------
+
+-- @since 1.1.3
+instance  Universe a => Universe (Solo a) where universe  = map Solo universe
+
+-- @since 1.1.3
+instance  Finite   a => Finite   (Solo a) where universeF = map Solo universeF; cardinality = retagWith Solo cardinality
