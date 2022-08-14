@@ -1,6 +1,6 @@
 name:               universe-some
 version:            1.2.1
-x-revision:         2
+x-revision:         3
 synopsis:           Universe instances for Some from some
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -42,8 +42,9 @@ tested-with:
    || ==8.6.5
    || ==8.8.4
    || ==8.10.4
-   || ==9.0.1
-   || ==9.2.1
+   || ==9.0.2
+   || ==9.2.4
+   || ==9.4.1
 
 source-repository head
   type:     git
@@ -62,9 +63,9 @@ library
     Data.Universe.Some.TH
 
   build-depends:
-      base              >=4.3      && <4.17
+      base              >=4.3      && <4.18
     , some              >=1.0.2    && <1.1
-    , template-haskell  >=2.5      && <2.19
+    , template-haskell  >=2.5      && <2.20
     , th-abstraction    >=0.4.2.0  && <0.5
     , transformers      >=0.3.0.0  && <0.7
     , universe-base     >=1.1.2    && <1.1.4
