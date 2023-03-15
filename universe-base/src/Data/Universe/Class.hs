@@ -43,12 +43,21 @@ import qualified Data.Semigroup as Semi
 import qualified Data.Set as Set
 import qualified Data.Map as Map
 
-#if MIN_VERSION_base(4,16,0)
-import Data.Tuple (Solo (..))
+#if MIN_VERSION_base(4,18,0)
+import Data.Tuple (Solo (MkSolo))
+#elif MIN_VERSION_base(4,16,0)
+import Data.Tuple (Solo (Solo))
+#define MkSolo Solo
 #elif MIN_VERSION_base(4,15,0)
-import GHC.Tuple (Solo (..))
+import GHC.Tuple (Solo (Solo))
+#define MkSolo Solo
 #else
-import Data.Tuple.Solo (Solo (..))
+#if MIN_VERSION_OneTuple(0,4,0)
+import Data.Tuple.Solo (Solo (MkSolo))
+#else
+import Data.Tuple.Solo (Solo (Solo))
+#define MkSolo Solo
+#endif
 #endif
 
 -- $setup
@@ -452,7 +461,7 @@ instance (Finite (f a), Finite (g a))      => Finite   (Sum f g a) where
 -------------------------------------------------------------------------------
 
 -- @since 1.1.3
-instance  Universe a => Universe (Solo a) where universe  = map Solo universe
+instance  Universe a => Universe (Solo a) where universe  = map MkSolo universe
 
 -- @since 1.1.3
-instance  Finite   a => Finite   (Solo a) where universeF = map Solo universeF; cardinality = retagWith Solo cardinality
+instance  Finite   a => Finite   (Solo a) where universeF = map MkSolo universeF; cardinality = retagWith MkSolo cardinality
