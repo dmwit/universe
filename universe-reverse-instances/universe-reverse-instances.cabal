@@ -1,6 +1,6 @@
 name:               universe-reverse-instances
 version:            1.1.1
-x-revision:         3
+x-revision:         4
 synopsis:
   Instances of standard classes that are made possible by enumerations
 
@@ -35,9 +35,10 @@ tested-with:
    || ==8.8.4
    || ==8.10.7
    || ==9.0.2
-   || ==9.2.7
-   || ==9.4.4
-   || ==9.6.1
+   || ==9.2.8
+   || ==9.4.7
+   || ==9.6.3
+   || ==9.8.1
 
 source-repository head
   type:     git
@@ -59,7 +60,7 @@ library
     Data.Universe.Instances.Traversable
 
   build-depends:
-      base           >=4.3   && <4.19
+      base           >=4.3   && <4.20
     , containers     >=0.4   && <0.7
     , universe-base  >=1.1.2 && <1.1.4
 
