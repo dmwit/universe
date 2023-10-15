@@ -1,6 +1,6 @@
 name:               universe-dependent-sum
 version:            1.3
-x-revision:         3
+x-revision:         4
 synopsis:           Universe instances for types from dependent-sum
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -43,9 +43,10 @@ tested-with:
    || ==8.8.4
    || ==8.10.7
    || ==9.0.2
-   || ==9.2.7
-   || ==9.4.4
-   || ==9.6.1
+   || ==9.2.8
+   || ==9.4.7
+   || ==9.6.3
+   || ==9.8.1
 
 source-repository head
   type:     git
@@ -61,5 +62,5 @@ library
   hs-source-dirs:   src
   exposed-modules:  Data.Universe.DependentSum
   build-depends:
-      base           >=4.3   && <4.19
+      base           >=4.3   && <4.20
     , universe-some  >=1.2.1 && <1.3
