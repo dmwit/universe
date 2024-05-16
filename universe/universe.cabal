@@ -1,6 +1,6 @@
 cabal-version:      2.2
 name:               universe
-version:            1.2.2
+version:            1.2.3
 synopsis:           A class for finite and recursively enumerable types.
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
