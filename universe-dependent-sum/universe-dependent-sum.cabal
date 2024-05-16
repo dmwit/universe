@@ -1,6 +1,6 @@
+cabal-version:      2.2
 name:               universe-dependent-sum
-version:            1.3
-x-revision:         4
+version:            1.3.1
 synopsis:           Universe instances for types from dependent-sum
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -21,46 +21,34 @@ description:
   classes.
 
 homepage:           https://github.com/dmwit/universe
-license:            BSD3
+license:            BSD-3-Clause
 license-file:       LICENSE
 author:             Daniel Wagner
 maintainer:         me@dmwit.com
 copyright:          Daniel Wagner 2014
 category:           Data
 build-type:         Simple
-cabal-version:      >=1.10
 extra-source-files: changelog
 tested-with:
-  GHC ==7.0.4
-   || ==7.4.2
-   || ==7.6.3
-   || ==7.8.4
-   || ==7.10.3
-   || ==8.0.2
-   || ==8.2.2
-   || ==8.4.4
-   || ==8.6.5
+  GHC ==8.6.5
    || ==8.8.4
    || ==8.10.7
    || ==9.0.2
    || ==9.2.8
-   || ==9.4.7
-   || ==9.6.3
-   || ==9.8.1
+   || ==9.4.8
+   || ==9.6.5
+   || ==9.8.2
+   || ==9.10.1
 
 source-repository head
   type:     git
   location: https://github.com/dmwit/universe
-
-source-repository this
-  type:     git
-  location: https://github.com/dmwit/universe
-  tag:      universe-1.2.1
+  subdir:   universe-dependent-sum
 
 library
   default-language: Haskell2010
   hs-source-dirs:   src
   exposed-modules:  Data.Universe.DependentSum
   build-depends:
-      base           >=4.3   && <4.20
-    , universe-some  >=1.2.1 && <1.3
+      base           >=4.12  && <4.21
+    , universe-some  >=1.2.2 && <1.3

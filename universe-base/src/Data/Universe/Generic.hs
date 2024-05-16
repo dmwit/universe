@@ -1,11 +1,6 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleContexts #-}
-#if __GLASGOW_HASKELL__ >=704
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >=702
-{-# LANGUAGE Trustworthy #-}
-#endif
 module Data.Universe.Generic where
 
 import GHC.Generics
@@ -73,7 +68,6 @@ instance Universe a => GUniverseProduct (K1 r a) where
 universeGeneric :: (Generic a, GUniverse (Rep a)) => [a]
 universeGeneric = map to guniverse 
 
-#if __GLASGOW_HASKELL__ >= 804
 -- $empty
 --
 -- >>> :set -XEmptyDataDeriving
@@ -81,4 +75,3 @@ universeGeneric = map to guniverse
 -- >>> data Zero deriving (Show, Generic)
 -- >>> universeGeneric :: [Zero]
 -- []
-#endif

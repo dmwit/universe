@@ -1,14 +1,5 @@
-{-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 800
-{-# LANGUAGE TemplateHaskellQuotes #-}
-#else
-{-# LANGUAGE TemplateHaskell #-}
-#endif
-#if __GLASGOW_HASKELL__ >=704 && MIN_VERSION_template_haskell(2,12,0)
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >=702
-{-# LANGUAGE Trustworthy #-}
-#endif
+{-# LANGUAGE TemplateHaskellQuotes #-}
 module Data.Universe.Some.TH (
   DeriveUniverseSome (..),
   universeSomeQ,
@@ -68,11 +59,7 @@ instance DeriveUniverseSome Name where
     di <- reifyDatatype name
     let DatatypeInfo { datatypeContext = ctxt
                      , datatypeName    = parentName
-#if MIN_VERSION_th_abstraction(0,3,0)
                      , datatypeInstTypes = vars0
-#else
-                     , datatypeVars    = vars0
-#endif
                      , datatypeCons    = cons
                      } = di
 
@@ -80,20 +67,11 @@ instance DeriveUniverseSome Name where
       Nothing -> fail "Datatype should have at least one type variable"
       Just (vars, var) -> do
         varNames <- forM vars $ \v -> case v of
-#if MIN_VERSION_template_haskell(2,8,0)
           SigT (VarT n) StarT -> newName "x"
-#else
-          SigT (VarT n) StarK -> newName "x"
-#endif
           _                   -> fail "Only arguments of kind Type are supported"
 
-#if MIN_VERSION_template_haskell(2,10,0)
         let constrs :: [TypeQ]
             constrs = map (\n -> conT ''Universe `appT` varT n) varNames
-#else
-        let constrs :: [PredQ]
-            constrs = map (\n -> classP ''Universe [varT n]) varNames
-#endif
         let typ     = foldl (\c n -> c `appT` varT n) (conT parentName) varNames
 
         i <- instanceD (cxt constrs) (conT ''UniverseSome `appT` typ)
@@ -106,13 +84,8 @@ instanceDecFor :: DatatypeInfo -> Q Dec
 instanceDecFor di = valD (varP 'universeSome) (normalB $ universeSomeQ' di) []
 
 instance DeriveUniverseSome Dec where
-#if MIN_VERSION_template_haskell(2,11,0)
   deriveUniverseSome (InstanceD overlaps c classHead []) = do
     let instanceFor = InstanceD overlaps c classHead
-#else
-  deriveUniverseSome (InstanceD c classHead []) = do
-    let instanceFor = InstanceD c classHead
-#endif
     case classHead of
       ConT u `AppT` t | u == ''UniverseSome -> do
         name <- headOfType t
@@ -143,11 +116,7 @@ universeSomeQ' :: DatatypeInfo -> Q Exp
 universeSomeQ' di = do
   let DatatypeInfo { datatypeContext = ctxt
                    , datatypeName    = parentName
-#if MIN_VERSION_th_abstraction(0,3,0)
                    , datatypeInstTypes = vars0
-#else
-                   , datatypeVars    = vars0
-#endif
                    , datatypeCons    = cons
                    } = di
 

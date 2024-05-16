@@ -5,7 +5,3 @@ packages:
   universe-some/
   universe-dependent-sum/
   universe/
-
-packages:
-  deprecated/universe-instances-base/
-  deprecated/universe-instances-trans/

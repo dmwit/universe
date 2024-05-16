@@ -1,19 +1,15 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UndecidableInstances #-}
 -- Data.Coerce is Unsafe
-#if __GLASGOW_HASKELL__ >=704 && !MIN_VERSION_base(4,7,0)
-{-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >=702
 {-# LANGUAGE Trustworthy #-}
-#endif
 module Data.Universe.Instances.Extended (
   -- | Instances for 'Universe' and 'Finite' for function-like functors and the empty type.
   Universe(..), Finite(..)
   ) where
 
 import Control.Comonad.Trans.Traced (TracedT (..))
+import Data.Coerce (coerce)
 import Data.Functor.Contravariant (Op (..), Predicate (..))
 import Data.Functor.Rep (Representable (..), Co (..))
 import Data.Map (Map)
@@ -24,9 +20,6 @@ import Data.Universe.Helpers (retag, Tagged, Natural)
 import qualified Data.Map as M
 import qualified Data.Set as S
 
-#if MIN_VERSION_base(4,7,0)
-import Data.Coerce (coerce)
-#endif
 
 -- $setup
 --
@@ -61,11 +54,7 @@ instance (Representable f, Finite s, Ord s, Finite (Rep f), Ord (Rep f), Univers
   where universe = map tabulate universe
 
 instance (Universe a, Finite b, Ord b) => Universe (Op a b) where
-#if MIN_VERSION_base(4,7,0)
    universe = coerce (universe :: [b -> a])
-#else
-   universe = map Op universe
-#endif
 instance (Finite a, Ord a) => Universe (Predicate a) where
   universe = map (Predicate . flip S.member) universe
 
