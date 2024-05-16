@@ -1,14 +1,8 @@
-{-# LANGUAGE CPP, BangPatterns, TypeFamilies, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleContexts #-}
-#ifdef DEFAULT_SIGNATURES
-{-# LANGUAGE DefaultSignatures #-}
-#endif
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >=704
+{-# LANGUAGE BangPatterns, TypeFamilies, ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >=702
-{-# LANGUAGE Trustworthy #-}
-#endif
 -- | Bottoms are ignored for this entire module:
 -- only fully-defined inhabitants are considered inhabitants.
 module Data.Universe.Class
@@ -52,12 +46,7 @@ import Data.Tuple (Solo (Solo))
 import GHC.Tuple (Solo (Solo))
 #define MkSolo Solo
 #else
-#if MIN_VERSION_OneTuple(0,4,0)
 import Data.Tuple.Solo (Solo (MkSolo))
-#else
-import Data.Tuple.Solo (Solo (Solo))
-#define MkSolo Solo
-#endif
 #endif
 
 -- $setup
@@ -83,10 +72,8 @@ import Data.Tuple.Solo (Solo (Solo))
 -- @
 class Universe a where
   universe :: [a]
-#ifdef DEFAULT_SIGNATURES
   default universe :: (Enum a, Bounded a) => [a]
   universe = universeDef
-#endif
 
 -- | Creating an instance of this class is a declaration that your 'universe'
 -- eventually ends. Minimal definition: no methods defined. By default,

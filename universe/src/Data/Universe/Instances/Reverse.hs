@@ -1,10 +1,5 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE NoImplicitPrelude #-}
-#if __GLASGOW_HASKELL__ >=704
 {-# LANGUAGE Safe #-}
-#elif __GLASGOW_HASKELL__ >=702
-{-# LANGUAGE Trustworthy #-}
-#endif
 -- | A convenience module that imports the sibling modules @Eq@, @Ord@,
 -- @Show@, @Read@, and @Traversable@ to provide instances of these classes
 -- for functions over finite inputs.
