@@ -41,7 +41,7 @@ library
   exposed-modules:  Data.Universe.Instances.Extended
   build-depends:
       adjunctions    >=4.4.2 && <4.5
-    , base           >=4.12  && <4.21
+    , base           >=4.12  && <4.22
     , comonad        >=5.0.8 && <5.1
     , containers
     , universe-base  >=1.1.4 && <1.1.5
