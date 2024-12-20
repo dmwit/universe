@@ -28,10 +28,9 @@ tested-with:
    || ==9.0.2
    || ==9.2.8
    || ==9.4.8
-   || ==9.6.6
-   || ==9.8.4
+   || ==9.6.5
+   || ==9.8.2
    || ==9.10.1
-   || ==9.12.1
 
 source-repository head
   type:     git
@@ -49,7 +48,7 @@ library
     Data.Universe.Instances.Traversable
 
   build-depends:
-      base           >=4.3   && <4.22
+      base           >=4.3   && <4.21
     , containers     >=0.4   && <0.8
     , universe-base  >=1.1.4 && <1.1.5
 

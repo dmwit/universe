@@ -30,10 +30,9 @@ tested-with:
    || ==9.0.2
    || ==9.2.8
    || ==9.4.8
-   || ==9.6.6
-   || ==9.8.4
+   || ==9.6.5
+   || ==9.8.2
    || ==9.10.1
-   || ==9.12.1
 
 source-repository head
   type:     git
@@ -56,7 +55,7 @@ library
     TypeFamilies
 
   build-depends:
-      base          >=4.12    && <4.22
+      base          >=4.12    && <4.21
     , containers    >=0.6.0.1 && <0.8
     , tagged        >=0.8.8   && <0.9
     , transformers  >=0.5.6.2 && <0.7

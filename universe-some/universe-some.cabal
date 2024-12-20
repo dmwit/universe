@@ -36,10 +36,9 @@ tested-with:
    || ==9.0.2
    || ==9.2.8
    || ==9.4.8
-   || ==9.6.6
-   || ==9.8.4
+   || ==9.6.5
+   || ==9.8.2
    || ==9.10.1
-   || ==9.12.1
 
 source-repository head
   type:     git
@@ -54,9 +53,9 @@ library
     Data.Universe.Some.TH
 
   build-depends:
-      base              >=4.12    && <4.22
+      base              >=4.12    && <4.21
     , some              >=1.0.6    && <1.1
-    , template-haskell  >=2.14     && <2.24
+    , template-haskell  >=2.14     && <2.23
     , th-abstraction    >=0.7.0.0  && <0.8
     , transformers      >=0.5.6.2  && <0.7
     , universe-base     >=1.1.4    && <1.1.5
