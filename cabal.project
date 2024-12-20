@@ -5,3 +5,14 @@ packages:
   universe-some/
   universe-dependent-sum/
   universe/
+
+tests: True
+test-show-details: direct
+
+if impl (ghc >= 9.12)
+  allow-newer:
+    , assoc:base
+    , indexed-traversable:base
+    , some:base
+    , transformers:base
+    , unordered-containers:template-haskell

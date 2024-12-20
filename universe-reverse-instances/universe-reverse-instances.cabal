@@ -48,7 +48,7 @@ library
     Data.Universe.Instances.Traversable
 
   build-depends:
-      base           >=4.3   && <4.21
+      base           >=4.3   && <4.22
     , containers     >=0.4   && <0.8
     , universe-base  >=1.1.4 && <1.1.5
 

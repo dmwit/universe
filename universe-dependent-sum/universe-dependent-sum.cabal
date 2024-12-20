@@ -50,5 +50,5 @@ library
   hs-source-dirs:   src
   exposed-modules:  Data.Universe.DependentSum
   build-depends:
-      base           >=4.12  && <4.21
+      base           >=4.12  && <4.22
     , universe-some  >=1.2.2 && <1.3
