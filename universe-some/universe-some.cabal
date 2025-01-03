@@ -1,6 +1,7 @@
 cabal-version:      2.2
 name:               universe-some
 version:            1.2.2
+x-revision:         1
 synopsis:           Universe instances for Some from some
 description:
   A class for finite and recursively enumerable types and some helper functions for enumerating them
@@ -36,9 +37,10 @@ tested-with:
    || ==9.0.2
    || ==9.2.8
    || ==9.4.8
-   || ==9.6.5
-   || ==9.8.2
+   || ==9.6.6
+   || ==9.8.4
    || ==9.10.1
+   || ==9.12.1
 
 source-repository head
   type:     git
@@ -53,9 +55,9 @@ library
     Data.Universe.Some.TH
 
   build-depends:
-      base              >=4.12    && <4.21
+      base              >=4.12    && <4.22
     , some              >=1.0.6    && <1.1
-    , template-haskell  >=2.14     && <2.23
+    , template-haskell  >=2.14     && <2.24
     , th-abstraction    >=0.7.0.0  && <0.8
     , transformers      >=0.5.6.2  && <0.7
     , universe-base     >=1.1.4    && <1.1.5
