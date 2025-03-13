@@ -1,3 +1,4 @@
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE Safe #-}
@@ -7,6 +8,7 @@ module Data.Universe.Some (
   ) where
 
 import Data.Functor.Sum (Sum (..))
+import Data.Kind (Type)
 import Data.List (genericLength)
 import Data.Some (Some, mapSome, mkSome, foldSome)
 import Data.Type.Equality ((:~:) (..))
@@ -37,10 +39,10 @@ import qualified Data.Some.Church as C
 -- /Note:/ The 'Some' type is imported from "Data.Some", i.e. maybe
 -- either from "Data.Some.Newtype" (default) or "Data.Some.GADT" modules.
 --
-class UniverseSome f where
+class UniverseSome (f :: k -> Type) where
   universeSome :: [Some f]
 
-class UniverseSome f => FiniteSome f where
+class UniverseSome f => FiniteSome (f :: k -> Type) where
   universeFSome :: [Some f]
   universeFSome = universeSome
 
