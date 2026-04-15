@@ -201,7 +201,6 @@ jobs:
           echo "packages: $GITHUB_WORKSPACE/source/universe-instances-extended" >> cabal.project
           echo "packages: $GITHUB_WORKSPACE/source/universe-reverse-instances" >> cabal.project
           echo "packages: $GITHUB_WORKSPACE/source/universe-some" >> cabal.project
-          echo "packages: $GITHUB_WORKSPACE/source/universe-dependent-sum" >> cabal.project
           echo "packages: $GITHUB_WORKSPACE/source/universe" >> cabal.project
           cat cabal.project
       - name: sdist
@@ -222,8 +221,6 @@ jobs:
           echo "PKGDIR_universe_reverse_instances=${PKGDIR_universe_reverse_instances}" >> "$GITHUB_ENV"
           PKGDIR_universe_some="$(find "$GITHUB_WORKSPACE/unpacked" -maxdepth 1 -type d -regex '.*/universe-some-[0-9.]*')"
           echo "PKGDIR_universe_some=${PKGDIR_universe_some}" >> "$GITHUB_ENV"
-          PKGDIR_universe_dependent_sum="$(find "$GITHUB_WORKSPACE/unpacked" -maxdepth 1 -type d -regex '.*/universe-dependent-sum-[0-9.]*')"
-          echo "PKGDIR_universe_dependent_sum=${PKGDIR_universe_dependent_sum}" >> "$GITHUB_ENV"
           PKGDIR_universe="$(find "$GITHUB_WORKSPACE/unpacked" -maxdepth 1 -type d -regex '.*/universe-[0-9.]*')"
           echo "PKGDIR_universe=${PKGDIR_universe}" >> "$GITHUB_ENV"
           rm -f cabal.project cabal.project.local
@@ -233,7 +230,6 @@ jobs:
           echo "packages: ${PKGDIR_universe_instances_extended}" >> cabal.project
           echo "packages: ${PKGDIR_universe_reverse_instances}" >> cabal.project
           echo "packages: ${PKGDIR_universe_some}" >> cabal.project
-          echo "packages: ${PKGDIR_universe_dependent_sum}" >> cabal.project
           echo "packages: ${PKGDIR_universe}" >> cabal.project
           echo "package universe-base" >> cabal.project
           echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project
@@ -242,8 +238,6 @@ jobs:
           echo "package universe-reverse-instances" >> cabal.project
           echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project
           echo "package universe-some" >> cabal.project
-          echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project
-          echo "package universe-dependent-sum" >> cabal.project
           echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project
           echo "package universe" >> cabal.project
           echo "    ghc-options: -Werror=missing-methods -Werror=missing-fields" >> cabal.project
@@ -255,8 +249,6 @@ jobs:
           if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "    ghc-options: -Werror=unused-packages" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "package universe-some" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "    ghc-options: -Werror=unused-packages" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "package universe-dependent-sum" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "    ghc-options: -Werror=unused-packages" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "package universe" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90400)) -ne 0 ] ; then echo "    ghc-options: -Werror=unused-packages" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package universe-base" >> cabal.project ; fi
@@ -267,13 +259,11 @@ jobs:
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package universe-some" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package universe-dependent-sum" >> cabal.project ; fi
-          if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "package universe" >> cabal.project ; fi
           if [ $((HCNUMVER >= 90000)) -ne 0 ] ; then echo "    ghc-options: -Werror=incomplete-patterns -Werror=incomplete-uni-patterns" >> cabal.project ; fi
           cat >> cabal.project <<EOF
           EOF
-          $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: any.$_ installed\n" unless /^(universe|universe-base|universe-dependent-sum|universe-instances-extended|universe-reverse-instances|universe-some)$/; }' >> cabal.project.local
+          $HCPKG list --simple-output --names-only | perl -ne 'for (split /\s+/) { print "constraints: any.$_ installed\n" unless /^(universe|universe-base|universe-instances-extended|universe-reverse-instances|universe-some)$/; }' >> cabal.project.local
           cat cabal.project
           cat cabal.project.local
       - name: dump install plan
@@ -312,8 +302,6 @@ jobs:
           cd ${PKGDIR_universe_reverse_instances} || false
           ${CABAL} -vnormal check
           cd ${PKGDIR_universe_some} || false
-          ${CABAL} -vnormal check
-          cd ${PKGDIR_universe_dependent_sum} || false
           ${CABAL} -vnormal check
           cd ${PKGDIR_universe} || false
           ${CABAL} -vnormal check
