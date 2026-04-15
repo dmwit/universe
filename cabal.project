@@ -3,5 +3,4 @@ packages:
   universe-instances-extended/
   universe-reverse-instances/
   universe-some/
-  universe-dependent-sum/
   universe/
