@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE Safe #-}
 module Data.Universe.Some (
@@ -12,6 +13,7 @@ import Data.Some (Some, mapSome, mkSome, foldSome)
 import Data.Type.Equality ((:~:) (..))
 import Data.Universe.Class (Universe (..), Finite (..))
 import Data.Universe.Helpers (Tagged (..), Natural, (+++))
+import GHC.Generics ((:+:) (..))
 
 import qualified Data.Some.GADT as G
 import qualified Data.Some.Newtype as N
@@ -94,6 +96,12 @@ instance (UniverseSome f, UniverseSome g) => UniverseSome (Sum f g) where
 
 instance (FiniteSome f, FiniteSome g) => FiniteSome (Sum f g) where
   universeFSome = map (mapSome InL) universeFSome ++ map (mapSome InR) universeFSome
+
+instance (UniverseSome f, UniverseSome g) => UniverseSome (f :+: g) where
+  universeSome = map (mapSome L1) universeSome +++ map (mapSome R1) universeSome
+
+instance (FiniteSome f, FiniteSome g) => FiniteSome (f :+: g) where
+  universeFSome = map (mapSome L1) universeFSome ++ map (mapSome R1) universeFSome
 
 -- Note: Product instance is tricky, we could for special cases.
 -- e.g. '(GEq f, f ~ g) => UnvierseSome (Product f g)', but this is boring
